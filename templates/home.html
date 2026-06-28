@@ -65,11 +65,13 @@
     </nav>
 
     <!-- Tuck Shop Break Alert Banner -->
-    <div id="breakBanner" class="alert alert-danger border-0 rounded-0 m-0 py-3 text-center d-none" style="z-index: 1040; position: relative; background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: white;">
+    <div id="breakBanner" class="alert alert-danger border-0 rounded-0 m-0 py-3 text-center d-none"
+        style="z-index: 1040; position: relative; background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: white;">
         <div class="container d-flex align-items-center justify-content-center gap-2 flex-wrap">
             <span class="fs-5"><i class="bi bi-exclamation-triangle-fill animate-pulse"></i></span>
             <strong>Break in Tuckshop! Tuckshop is currently Closed!</strong>
-            <span class="opacity-75">You can still submit print orders and generate tokens normally. Collections will resume after the break.</span>
+            <span class="opacity-75">You can still submit print orders and generate tokens normally. Collections will
+                resume after the break.</span>
         </div>
     </div>
 
@@ -151,7 +153,9 @@
                             <i class="bi bi-clock-history fs-3"></i>
                         </div>
                         <h4 class="fw-bold mb-2">Save Time</h4>
-                        <p class="text-muted m-0">Upload documents from anywhere inside or outside the college. Attend your lectures peacefully and save valuable time for other coursework while we handle the queue!</p>
+                        <p class="text-muted m-0">Upload documents from anywhere inside or outside the college. Attend
+                            your lectures peacefully and save valuable time for other coursework while we handle the
+                            queue!</p>
                     </div>
                 </div>
                 <!-- Benefit 2: Avoid Queues -->
@@ -278,8 +282,10 @@
 
                                     <!-- Pickup Time selection -->
                                     <div class="col-md-6">
-                                        <label for="pickup_time" class="form-label form-label-custom">Preferred Pickup Time</label>
-                                        <select class="form-select form-control-custom" id="pickup_time" name="pickup_time" required>
+                                        <label for="pickup_time" class="form-label form-label-custom">Preferred Pickup
+                                            Time</label>
+                                        <select class="form-select form-control-custom" id="pickup_time"
+                                            name="pickup_time" required>
                                             <option value="" disabled selected>Choose Pickup Time</option>
                                             <option value="09:30 AM">09:30 AM</option>
                                             <option value="10:00 AM">10:00 AM</option>
@@ -353,60 +359,70 @@
             <div class="row justify-content-center">
                 <div class="col-lg-6 text-center">
                     <h2 class="fw-bold mb-2">Track Your Order Status</h2>
-                    <p class="text-muted mb-4">Enter your 3-digit Token Number below to track progress or cancel unpaid requests.</p>
-                    
+                    <p class="text-muted mb-4">Enter your 3-digit Token Number below to track progress or cancel unpaid
+                        requests.</p>
+
                     <div class="card-custom bg-white p-4 shadow-sm text-start">
                         <!-- Search Box -->
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control form-control-custom" id="trackTokenInput" placeholder="Enter Token Number (e.g. 058)" aria-label="Token Number">
-                            <button class="btn btn-primary-custom px-4" type="button" onclick="trackOrder()">Track Status</button>
+                            <input type="text" class="form-control form-control-custom" id="trackTokenInput"
+                                placeholder="Enter Token Number (e.g. 058)" aria-label="Token Number">
+                            <button class="btn btn-primary-custom px-4" type="button" onclick="trackOrder()">Track
+                                Status</button>
                         </div>
-                        
+
                         <!-- Tracking Result Area (Hidden initially) -->
                         <div id="trackingResult" class="d-none text-start mt-4 pt-3 border-top border-light-subtle">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="fw-bold m-0" id="resultTokenHeader">Token #058</h5>
-                                <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-1.5 rounded-pill fw-bold" id="resultStatusBadge">Pending</span>
+                                <span
+                                    class="badge bg-warning bg-opacity-10 text-warning px-3 py-1.5 rounded-pill fw-bold"
+                                    id="resultStatusBadge">Pending</span>
                             </div>
-                            
+
                             <!-- Summary Details -->
                             <div class="p-3 bg-light rounded-3 mb-3 small">
                                 <div class="row g-2">
                                     <div class="col-6 text-muted">Student Name:</div>
                                     <div class="col-6 fw-semibold text-end text-dark" id="resultName">Rohan Sharma</div>
-                                    
+
                                     <div class="col-6 text-muted">Roll Number:</div>
                                     <div class="col-6 fw-semibold text-end text-dark" id="resultRoll">21BCE0432</div>
 
                                     <div class="col-6 text-muted">Service & Print Type:</div>
-                                    <div class="col-6 fw-semibold text-end text-dark" id="resultService">Printout (Color)</div>
+                                    <div class="col-6 fw-semibold text-end text-dark" id="resultService">Printout
+                                        (Color)</div>
 
                                     <div class="col-6 text-muted">Pickup Time:</div>
                                     <div class="col-6 fw-semibold text-end text-dark" id="resultPickup">12:30 PM</div>
 
                                     <div class="col-6 text-muted">Payment Method:</div>
-                                    <div class="col-6 fw-semibold text-end text-dark" id="resultPayment">Pay on Pickup</div>
+                                    <div class="col-6 fw-semibold text-end text-dark" id="resultPayment">Pay on Pickup
+                                    </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Cancel and Wait Time Section -->
                             <div id="resultCancelSection" class="d-none pt-2 text-center">
-                                <button class="btn btn-outline-danger w-100 py-2.5 mb-2 fw-semibold" id="cancelOrderBtn" onclick="cancelTrackedOrder()">
+                                <button class="btn btn-outline-danger w-100 py-2.5 mb-2 fw-semibold" id="cancelOrderBtn"
+                                    onclick="cancelTrackedOrder()">
                                     <i class="bi bi-x-circle me-1"></i> Cancel Print Request
                                 </button>
                                 <div class="text-muted small" id="resultWaitTime">
                                     Estimated queue processing time: <strong>6 minutes</strong> ahead of you.
                                 </div>
                             </div>
-                            
-                            <div id="resultProcessingLockMsg" class="d-none text-center pt-2 small text-danger fw-semibold">
+
+                            <div id="resultProcessingLockMsg"
+                                class="d-none text-center pt-2 small text-danger fw-semibold">
                                 <i class="bi bi-lock-fill me-1"></i> Printing started. Cancellation is locked.
                             </div>
                         </div>
-                        
+
                         <!-- Not Found Alert -->
                         <div id="trackingNotFound" class="alert alert-danger d-none mt-3 small text-center mb-0">
-                            <i class="bi bi-exclamation-circle-fill me-1"></i> Token number not found. Please verify and try again.
+                            <i class="bi bi-exclamation-circle-fill me-1"></i> Token number not found. Please verify and
+                            try again.
                         </div>
                     </div>
                 </div>
@@ -839,7 +855,7 @@
             // Cancellation option logic: Only if Pending
             const cancelSection = document.getElementById('resultCancelSection');
             const lockMsg = document.getElementById('resultProcessingLockMsg');
-            
+
             cancelSection.classList.add('d-none');
             lockMsg.classList.add('d-none');
 
@@ -892,7 +908,7 @@
                 }
 
                 alert("Your print order has been canceled successfully.");
-                
+
                 // Hide tracking result area
                 document.getElementById('trackingResult').classList.add('d-none');
                 document.getElementById('trackTokenInput').value = '';
