@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrintEase - Order Success</title>
+
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- Google Fonts (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Custom Style Sheet (Relative link for local viewing) -->
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+    <!-- 1. NAVBAR SECTION -->
+    <nav class="navbar navbar-expand-lg sticky-top navbar-custom py-3">
+        <div class="container">
+            <a class="navbar-brand navbar-brand-logo" href="home.html">
+                <i class="bi bi-printer-fill"></i>
+                <span>PrintEase</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- 2. SUCCESS CONTENT CONTAINER -->
+    <main class="flex-grow-1 d-flex align-items-center py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6 col-md-8">
+                    <div class="card-custom border-0 overflow-hidden shadow-lg text-center p-4 p-md-5">
+
+                        <!-- Success Check Animation Box -->
+                        <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success rounded-circle mb-4"
+                            style="width: 80px; height: 80px;">
+                            <i class="bi bi-check-circle-fill" style="font-size: 3.5rem;"></i>
+                        </div>
+
+                        <h2 class="fw-bold text-dark mb-1">Order Placed Successfully!</h2>
+                        <p class="text-muted">Your print order has been added to the tuck shop processing queue.</p>
+
+                        <!-- Generated Token Box -->
+                        <div class="my-4 p-3 bg-light rounded-4 border border-light-subtle position-relative">
+                            <span class="text-uppercase text-muted small fw-bold d-block mb-1">Your Pickup Token</span>
+                            <span class="fs-2 fw-extrabold text-primary tracking-wider" id="tokenDisplay">PE-9404</span>
+                            <div class="mt-2 text-center">
+                                <button class="btn btn-sm btn-light border py-1 px-3 rounded-pill text-muted small"
+                                    onclick="copyToken()">
+                                    <i class="bi bi-copy me-1"></i> Copy Token
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Order Summary Card -->
+                        <div class="text-start bg-light rounded-4 p-3 mb-4 border border-light-subtle">
+                            <h6 class="fw-bold text-dark border-bottom pb-2 mb-3"><i
+                                    class="bi bi-receipt me-1"></i>Order Summary</h6>
+
+                            <div class="row g-2 small">
+                                <div class="col-6 text-muted">Student Name:</div>
+                                <div class="col-6 fw-semibold text-end text-dark" id="studentName">Rohan Sharma</div>
+
+                                <div class="col-6 text-muted">Roll Number:</div>
+                                <div class="col-6 fw-semibold text-end text-dark" id="rollNumber">21BCE0432</div>
+
+                                <div class="col-6 text-muted">Service Type:</div>
+                                <div class="col-6 fw-semibold text-end text-dark" id="serviceType">Printout (Color)
+                                </div>
+
+                                <div class="col-6 text-muted">Quantity:</div>
+                                <div class="col-6 fw-semibold text-end text-dark" id="qtyDisplay">12 Pages • 2 Copies
+                                </div>
+
+                                <div class="col-6 text-muted">Estimated Cost:</div>
+                                <div class="col-6 fw-bold text-end text-primary" id="costDisplay">₹240.00</div>
+
+                                <div class="col-6 text-muted">Payment Method:</div>
+                                <div class="col-6 fw-semibold text-end text-dark" id="paymentMethod">Pay on Pickup
+                                    (UPI/Cash)</div>
+
+                                <div class="col-6 text-muted">Pickup Time:</div>
+                                <div class="col-6 fw-bold text-end text-dark" id="pickupTime"><i
+                                        class="bi bi-clock-fill me-1 text-primary"></i>12:30 PM (Lunch Break)</div>
+                            </div>
+                        </div>
+
+                        <!-- Cancel Option for Unpaid Orders (Pay on Pickup) -->
+                        <div id="cancelSection" class="mt-3 pt-3 border-top border-light-subtle d-none">
+                            <span class="text-muted small d-block mb-2">Need to make a change? You can cancel this order
+                                before printing starts.</span>
+                            <button class="btn btn-sm btn-outline-danger px-3 py-2 rounded-3"
+                                onclick="cancelStudentOrder()">
+                                <i class="bi bi-x-circle me-1"></i> Cancel Print Order
+                            </button>
+                        </div>
+
+                        <!-- Alert Notice -->
+                        <div
+                            class="alert alert-warning border-warning border-opacity-10 bg-warning bg-opacity-5 rounded-3 text-start small mb-4">
+                            <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+                            <strong>Important:</strong> Please take a screenshot of this page or copy your token number.
+                            Show this token at the counter to collect your prints.
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex flex-column gap-2">
+                            <a href="home.html" class="btn btn-primary-custom py-2">
+                                <i class="bi bi-house-door-fill me-1"></i> Back to Student Portal
+                            </a>
+                            <button class="btn btn-outline-custom py-2" onclick="window.print()">
+                                <i class="bi bi-printer me-1"></i> Print Receipt
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 3. FOOTER SECTION -->
+    <footer class="footer-custom bg-white border-top py-3 text-center">
+        <div class="container">
+            <p class="m-0 text-muted small">&copy; 2026 PrintEase System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 Bundle JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Helper JS script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Read details from localStorage
+            const currentOrder = JSON.parse(localStorage.getItem('currentOrder'));
+            if (currentOrder) {
+                document.getElementById('tokenDisplay').textContent = currentOrder.token;
+                document.getElementById('studentName').textContent = currentOrder.name;
+                document.getElementById('rollNumber').textContent = currentOrder.roll;
+                document.getElementById('serviceType').textContent = currentOrder.service;
+                document.getElementById('qtyDisplay').textContent = currentOrder.qty;
+                document.getElementById('costDisplay').textContent = currentOrder.price;
+                document.getElementById('paymentMethod').textContent = currentOrder.payment;
+                document.getElementById('pickupTime').innerHTML = `<i class="bi bi-clock-fill me-1 text-primary"></i>${currentOrder.pickup}`;
+
+                // Show cancel button only if payment method is "Pay on Pickup" (unpaid)
+                const cancelSection = document.getElementById('cancelSection');
+                if (currentOrder.payment === "Pay on Pickup") {
+                    cancelSection.classList.remove('d-none');
+                } else {
+                    cancelSection.classList.add('d-none');
+                }
+            }
+        });
+
+        // Copy Token Utility function
+        function copyToken() {
+            const tokenText = document.getElementById('tokenDisplay').textContent;
+            navigator.clipboard.writeText(tokenText).then(() => {
+                alert('Token copied to clipboard: ' + tokenText);
+            }).catch(err => {
+                console.error('Failed to copy token: ', err);
+            });
+        }
+
+        // Cancel Student Order Functionality
+        function cancelStudentOrder() {
+            if (confirm("Are you sure you want to cancel your print order?")) {
+                const currentOrder = JSON.parse(localStorage.getItem('currentOrder'));
+                if (currentOrder) {
+                    // Remove from allOrders list
+                    let allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+                    allOrders = allOrders.filter(order => order.token !== currentOrder.token);
+                    localStorage.setItem('allOrders', JSON.stringify(allOrders));
+                }
+
+                // Clear current order
+                localStorage.removeItem('currentOrder');
+
+                alert("Order canceled successfully!");
+                window.location.href = "home.html";
+            }
+        }
+    </script>
+</body>
+
+</html>

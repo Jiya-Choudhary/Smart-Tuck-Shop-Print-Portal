@@ -1,0 +1,400 @@
+/* PrintEase Custom CSS - Modern Premium Styling */
+
+/* Custom Color System & Variables */
+:root {
+    --primary-color: #4f46e5;
+    /* Indigo */
+    --primary-hover: #4338ca;
+    --secondary-color: #0ea5e9;
+    /* Sky Blue */
+    --secondary-hover: #0284c7;
+    --dark-neutral: #0f172a;
+    /* Slate 900 */
+    --body-text: #334155;
+    /* Slate 700 */
+    --light-bg: #f8fafc;
+    /* Slate 50 */
+    --border-color: #e2e8f0;
+    /* Slate 200 */
+    --card-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+    --hover-shadow: 0 20px 40px -15px rgba(79, 70, 229, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --accent-glow: rgba(79, 70, 229, 0.15);
+}
+
+/* Global Smooth Settings */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--body-text);
+    background-color: var(--light-bg);
+    overflow-x: hidden;
+}
+
+/* Typography & Visual Details */
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Sticky Navbar Styling */
+.navbar-custom {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.navbar-brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--dark-neutral) !important;
+}
+
+.navbar-brand-logo i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+.nav-link-custom {
+    color: var(--body-text) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    transition: all 0.2s ease;
+}
+
+.nav-link-custom:hover {
+    color: var(--primary-color) !important;
+}
+
+/* Hero Section with Moving Ambient Glows */
+.hero-section {
+    position: relative;
+    padding: 8rem 0 6rem 0;
+    background: radial-gradient(circle at 10% 20%, rgba(79, 70, 229, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(14, 165, 233, 0.05) 0%, transparent 40%);
+    overflow: hidden;
+}
+
+.hero-glow-1 {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    top: -50px;
+    left: -50px;
+    z-index: -1;
+    filter: blur(40px);
+}
+
+.hero-glow-2 {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(14, 165, 233, 0.1) 0%, transparent 70%);
+    bottom: -100px;
+    right: -100px;
+    z-index: -1;
+    filter: blur(50px);
+}
+
+.hero-title {
+    font-weight: 800;
+    font-size: 3.5rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--dark-neutral);
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+}
+
+.hero-subtitle {
+    font-size: 1.15rem;
+    color: var(--body-text);
+    max-width: 550px;
+}
+
+/* Premium Primary Buttons */
+.btn-primary-custom {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white !important;
+    border: none;
+    font-weight: 600;
+    padding: 0.8rem 2rem;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+}
+
+.btn-primary-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+    opacity: 0.95;
+}
+
+.btn-outline-custom {
+    border: 2px solid var(--border-color);
+    background: transparent;
+    color: var(--dark-neutral) !important;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-custom:hover {
+    background: var(--light-bg);
+    border-color: var(--primary-color);
+    color: var(--primary-color) !important;
+}
+
+/* Premium Card Designs */
+.card-custom {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.card-custom:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--hover-shadow);
+    border-color: rgba(79, 70, 229, 0.2);
+}
+
+/* Icon Containers */
+.icon-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.icon-box-primary {
+    background: rgba(79, 70, 229, 0.08);
+    color: var(--primary-color);
+}
+
+.icon-box-secondary {
+    background: rgba(14, 165, 233, 0.08);
+    color: var(--secondary-color);
+}
+
+.card-custom:hover .icon-box-primary {
+    background: var(--primary-color);
+    color: #ffffff;
+    transform: rotate(5deg);
+}
+
+.card-custom:hover .icon-box-secondary {
+    background: var(--secondary-color);
+    color: #ffffff;
+    transform: rotate(5deg);
+}
+
+/* Custom Interactive Order Form Card */
+.form-card-header {
+    background: linear-gradient(135deg, var(--dark-neutral) 0%, #1e293b 100%);
+    padding: 2rem;
+    border-bottom: none;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.form-card-header-glow {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(14, 165, 233, 0.3) 0%, transparent 70%);
+    top: -50px;
+    right: -50px;
+    z-index: 1;
+}
+
+.form-card-header-content {
+    position: relative;
+    z-index: 2;
+}
+
+.form-label-custom {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--dark-neutral);
+    margin-bottom: 0.5rem;
+}
+
+.form-control-custom {
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    transition: all 0.2s ease;
+    background-color: #ffffff;
+}
+
+.form-control-custom:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px var(--accent-glow);
+    background-color: #ffffff;
+}
+
+/* Custom File Upload Box (Drag and Drop Visuals) */
+.file-upload-wrapper {
+    position: relative;
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+    padding: 2rem 1rem;
+    text-align: center;
+    background-color: var(--light-bg);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.file-upload-wrapper:hover,
+.file-upload-wrapper.dragover {
+    border-color: var(--primary-color);
+    background-color: rgba(79, 70, 229, 0.02);
+}
+
+.file-upload-input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.file-upload-icon {
+    font-size: 2.25rem;
+    color: var(--primary-color);
+    margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.file-upload-wrapper:hover .file-upload-icon {
+    transform: translateY(-3px);
+}
+
+/* Floating Cost Widget on Form */
+.cost-summary-card {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.05) 0%, rgba(14, 165, 233, 0.05) 100%);
+    border: 1px solid rgba(79, 70, 229, 0.15);
+    border-radius: 12px;
+    padding: 1.25rem;
+}
+
+/* Timeline Layout for "How it Works" */
+.timeline-container {
+    position: relative;
+}
+
+.timeline-step {
+    position: relative;
+    padding: 1.5rem;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    text-align: center;
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.timeline-step:hover {
+    transform: translateY(-4px);
+    border-color: var(--secondary-color);
+}
+
+.timeline-badge {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+}
+
+/* Modern Stats Section styling */
+.stat-card {
+    border-left: 5px solid var(--primary-color);
+}
+
+.stat-card-pending {
+    border-left: 5px solid #f59e0b;
+    /* Orange */
+}
+
+.stat-card-completed {
+    border-left: 5px solid #10b981;
+    /* Emerald */
+}
+
+.stat-number {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--dark-neutral);
+}
+
+/* Footer Design */
+.footer-custom {
+    background-color: var(--dark-neutral);
+    color: #94a3b8;
+    padding: 4rem 0 2rem 0;
+    border-top: 1px solid #1e293b;
+}
+
+.footer-custom h5 {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.footer-link {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.footer-link:hover {
+    color: #ffffff;
+    padding-left: 3px;
+}
+
+.footer-bottom {
+    border-top: 1px solid #1e293b;
+    padding-top: 1.5rem;
+    margin-top: 3rem;
+}
+
+/* Custom helper utilities */
+.bg-indigo-soft {
+    background-color: rgba(79, 70, 229, 0.08);
+}
+
+.letter-spacing-1 {
+    letter-spacing: 1px;
+}
