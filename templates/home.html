@@ -4,916 +4,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PrintEase - Smart Print & Photocopy Management System</title>
+    <title>PrintEase - Smart Tuck Shop Portal</title>
 
-    <!-- Bootstrap 5 CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Link to the custom modern style sheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-    <!-- Bootstrap Icons CDN -->
+    <!-- Bootstrap Icons CDN for rich iconography -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
-    <!-- Google Fonts (Inter) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- Custom Style Sheet (Relative link for local viewing, change to flask url_for in production) -->
-    <link rel="stylesheet" href="../static/style.css">
 </head>
 
 <body>
 
-    <!-- 1. NAVBAR SECTION -->
-    <nav class="navbar navbar-expand-lg sticky-top navbar-custom py-3">
-        <div class="container">
-            <!-- Brand Logo & Title -->
-            <a class="navbar-brand navbar-brand-logo" href="#">
-                <i class="bi bi-printer-fill"></i>
+    <!-- 1. HEADER & NAVIGATION -->
+    <header class="header-nav">
+        <div class="container nav-container">
+            <a href="/" class="logo-link">
+                <span class="logo-icon"><i class="bi bi-printer-fill"></i></span>
                 <span>PrintEase</span>
             </a>
-
-            <!-- Mobile Toggle Button -->
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- Navbar Links -->
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-lg-center gap-2 mt-3 mt-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link nav-link-custom active" aria-current="page" href="#hero">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="#services">Services</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="#how-it-works">How It Works</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="#track-order">Track Order</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="admin.html">Admin Dashboard</a>
-                    </li>
-                    <li class="nav-item ms-lg-2">
-                        <a class="btn btn-primary-custom" href="#order-form-section">Place Order</a>
-                    </li>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="/" class="active">Student Portal</a></li>
+                    <li><a href="/admin">Admin Dashboard</a></li>
                 </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Tuck Shop Break Alert Banner -->
-    <div id="breakBanner" class="alert alert-danger border-0 rounded-0 m-0 py-3 text-center d-none"
-        style="z-index: 1040; position: relative; background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: white;">
-        <div class="container d-flex align-items-center justify-content-center gap-2 flex-wrap">
-            <span class="fs-5"><i class="bi bi-exclamation-triangle-fill animate-pulse"></i></span>
-            <strong>Break in Tuckshop! Tuckshop is currently Closed!</strong>
-            <span class="opacity-75">You can still submit print orders and generate tokens normally. Collections will
-                resume after the break.</span>
-        </div>
-    </div>
-
-    <!-- 2. HERO SECTION -->
-    <header id="hero" class="hero-section">
-        <div class="hero-glow-1"></div>
-        <div class="hero-glow-2"></div>
-        <div class="container">
-            <div class="row align-items-center justify-content-between g-5">
-                <!-- Left Text Content -->
-                <div class="col-lg-6 text-center text-lg-start">
-                    <span
-                        class="badge bg-indigo-soft text-primary mb-3 px-3 py-2 rounded-pill border border-primary border-opacity-10 fw-semibold">
-                        <i class="bi bi-rocket-takeoff-fill me-1"></i> College Ideathon Project
-                    </span>
-                    <h1 class="hero-title mb-3">
-                        Skip the Queue, <br>
-                        <span class="text-gradient">Print Smart</span>
-                    </h1>
-                    <p class="hero-subtitle mb-4 text-muted">
-                        PrintEase makes printing and photocopying at your college tuck shop seamless. Upload your
-                        documents, set options, choose your pickup time, and collect without waiting!
-                    </p>
-                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start">
-                        <a href="#order-form-section"
-                            class="btn btn-primary-custom d-inline-flex align-items-center justify-content-center">
-                            Place Order <i class="bi bi-arrow-right ms-2"></i>
-                        </a>
-                        <a href="#how-it-works" class="btn btn-outline-custom">
-                            Learn More
-                        </a>
-                    </div>
-                </div>
-                <!-- Right Hero Decorative Layout -->
-                <div class="col-lg-5 d-none d-lg-block">
-                    <div class="card-custom p-4 border border-light position-relative">
-                        <div class="d-flex align-items-center justify-content-between mb-4">
-                            <h5 class="fw-bold m-0"><i class="bi bi-lightning-charge-fill text-warning me-1"></i> Live
-                                Counter</h5>
-                            <span
-                                class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1 fw-bold">Online</span>
-                        </div>
-                        <!-- Live Queue Monitor Widget -->
-                        <div class="p-3 bg-light rounded-3 mb-3 border border-light-subtle">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted small">Estimated Queue Time</span>
-                                <span class="fw-bold text-success small">~ 5 Mins</span>
-                            </div>
-                            <div class="progress" style="height: 6px;">
-                                <div class="progress-bar bg-success" role="progressbar" style="width: 25%"
-                                    aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div>
-                        <div class="p-3 bg-light rounded-3 border border-light-subtle">
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted small">Tuck Shop Status</span>
-                                <span class="fw-bold text-primary small">Operating Smoothly</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </nav>
         </div>
     </header>
 
-    <!-- 3. BENEFITS SECTION -->
-    <section id="services" class="py-5 bg-white border-top border-bottom border-light-subtle">
-        <div class="container py-4">
-            <div class="text-center mb-5">
-                <h2 class="fw-bold">Why Use PrintEase?</h2>
-                <p class="text-muted">Designed to make college operations efficient and student-friendly</p>
+    <!-- MAIN BODY CONTENT -->
+    <main class="container">
+
+        <!-- 2. HERO / INTRO BANNER -->
+        <section class="hero-section">
+            <div class="banner-card">
+                <h1>Smart Tuck Shop Portal</h1>
+                <p>Skip the long queues at the tuck shop! Upload details of your print/photocopy tasks, select your
+                    preferred pickup time, and collect your prints smoothly using a generated token.</p>
             </div>
+        </section>
 
-            <div class="row g-4 justify-content-center">
-                <!-- Benefit 1: Save Time -->
-                <div class="col-md-4">
-                    <div class="card-custom p-4 h-100">
-                        <div class="icon-box icon-box-primary">
-                            <i class="bi bi-clock-history fs-3"></i>
-                        </div>
-                        <h4 class="fw-bold mb-2">Save Time</h4>
-                        <p class="text-muted m-0">Upload documents from anywhere inside or outside the college. Attend
-                            your lectures peacefully and save valuable time for other coursework while we handle the
-                            queue!</p>
-                    </div>
+        <!-- 3. PORTAL CONTENT GRID (FORM + SIDEBAR PREVIEW) -->
+        <div class="portal-grid">
+
+            <!-- Left Side: Order Form Card -->
+            <section class="card">
+                <h2 class="card-title">
+                    <span class="card-title-icon"><i class="bi bi-file-earmark-plus"></i></span>
+                    Place Print Order
+                </h2>
+
+                <!-- Info banner warning about queue timings -->
+                <div class="alert-notice">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    Orders placed now will be processed for pickup according to your selected time slot.
                 </div>
-                <!-- Benefit 2: Avoid Queues -->
-                <div class="col-md-4">
-                    <div class="card-custom p-4 h-100">
-                        <div class="icon-box icon-box-secondary">
-                            <i class="bi bi-people-fill fs-3"></i>
+
+                <form action="/submit" method="POST" class="order-form" id="printOrderForm">
+
+                    <!-- Form Row: Name & Roll Number -->
+                    <div class="form-row-split">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" name="name" class="form-control"
+                                placeholder="e.g., Rohan Sharma" required>
                         </div>
-                        <h4 class="fw-bold mb-2">Avoid Queues</h4>
-                        <p class="text-muted m-0">Secure your print slot digitally. Walk in only when your documents are
-                            ready and waiting for you.</p>
+                        <div class="form-group">
+                            <label for="roll_no">Roll Number</label>
+                            <input type="text" id="roll_no" name="roll_no" class="form-control"
+                                placeholder="e.g., 21BCE0432" required>
+                        </div>
                     </div>
-                </div>
-                <!-- Benefit 3: Easy Pickup -->
-                <div class="col-md-4">
-                    <div class="card-custom p-4 h-100">
-                        <div class="icon-box icon-box-primary">
-                            <i class="bi bi-ticket-perforated-fill fs-3"></i>
+
+                    <!-- Form Row: Page Count & Print Type -->
+                    <div class="form-row-split">
+                        <div class="form-group">
+                            <label for="pages">Number of Pages</label>
+                            <input type="number" id="pages" name="pages" class="form-control" min="1" value="1"
+                                placeholder="e.g., 10" required>
                         </div>
-                        <h4 class="fw-bold mb-2">Easy Pickup & Priority</h4>
-                        <p class="text-muted m-0">Receive a unique token. Students who pay early (Online/Cash) and need
-                            printouts early get high-priority tokens to jump the tuck shop processing queue!</p>
+                        <div class="form-group">
+                            <label for="print_type">Print Type</label>
+                            <select id="print_type" name="print_type" class="form-control" required>
+                                <option value="B&W">Black & White (₹2/page)</option>
+                                <option value="Color">Color (₹10/page)</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- 4. ORDER FORM CARD -->
-    <section id="order-form-section" class="py-5">
-        <div class="container py-4">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="card-custom border-0 overflow-hidden shadow-lg">
-                        <!-- Card Header with Dark Gradient -->
-                        <div class="form-card-header text-white">
-                            <div class="form-card-header-glow"></div>
-                            <div class="form-card-header-content">
-                                <h3 class="fw-bold mb-1"><i
-                                        class="bi bi-file-earmark-pdf-fill text-danger me-2"></i>Place Print Order</h3>
-                                <p class="m-0 text-white-50 text-sm">Fill in details and upload your PDF to submit your
-                                    request instantly.</p>
-                            </div>
+                    <!-- Form Row: Pickup Time & Payment Mode -->
+                    <div class="form-row-split">
+                        <div class="form-group">
+                            <label for="pickup_time">Preferred Pickup Time</label>
+                            <input type="time" id="pickup_time" name="pickup_time" class="form-control" required>
                         </div>
+                        <div class="form-group">
+                            <label for="payment">Payment Mode</label>
+                            <select id="payment" name="payment" class="form-control" required>
+                                <option value="Pay on Pickup">Pay on Pickup (Cash / UPI)</option>
+                                <option value="UPI Online">UPI (Pay online via QR code)</option>
+                            </select>
+                        </div>
+                    </div>
 
-                        <!-- Card Body / Form -->
-                        <div class="card-body p-4 p-md-5">
-                            <form action="" method="POST" enctype="multipart/form-data" class="needs-validation"
-                                novalidate>
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-primary">
+                        <i class="bi bi-lightning-fill"></i> Generate Print Token
+                    </button>
+                </form>
+            </section>
 
-                                <div class="row g-4">
-                                    <!-- Student Name -->
-                                    <div class="col-md-6">
-                                        <label for="student_name" class="form-label form-label-custom">Student
-                                            Name</label>
-                                        <input type="text" class="form-control form-control-custom" id="student_name"
-                                            name="student_name" placeholder="Enter Full Name" required>
-                                        <div class="invalid-feedback">Please enter your name.</div>
-                                    </div>
+            <!-- Right Side: Sidebar Live Pricing & Status -->
+            <aside class="sidebar-wrapper">
 
-                                    <!-- Roll Number -->
-                                    <div class="col-md-6">
-                                        <label for="roll_number" class="form-label form-label-custom">Roll
-                                            Number</label>
-                                        <input type="text" class="form-control form-control-custom" id="roll_number"
-                                            name="roll_number" placeholder="Enter Roll Number (e.g. 21BCE001)" required>
-                                        <div class="invalid-feedback">Please enter your Roll Number.</div>
-                                    </div>
+                <!-- Dynamic Price Estimate Card -->
+                <div class="card price-box">
+                    <h3 class="price-title">Estimated Amount</h3>
+                    <div class="price-val" id="priceDisplay">₹2.00</div>
+                    <p class="price-sub" id="priceCalculationText">1 page × ₹2.00/page</p>
+                </div>
 
-                                    <!-- PDF Upload -->
-                                    <div class="col-12" id="fileUploadContainer">
-                                        <label class="form-label form-label-custom">Upload PDF File</label>
-                                        <div class="file-upload-wrapper" id="uploadArea">
-                                            <input type="file" class="file-upload-input" id="pdf_file" name="pdf_file"
-                                                accept=".pdf" required>
-                                            <i class="bi bi-cloud-arrow-up-fill file-upload-icon d-block"></i>
-                                            <span class="fw-bold d-block mb-1 text-dark" id="uploadTitle">Drag & Drop
-                                                PDF or Click to Browse</span>
-                                            <span class="text-muted small" id="uploadSub">Only PDF files are supported
-                                                (Max 15MB)</span>
-                                        </div>
-                                        <div class="invalid-feedback text-center mt-2 d-none" id="fileFeedback">Please
-                                            select a valid PDF file.</div>
-                                    </div>
-
-                                    <!-- Service Type -->
-                                    <div class="col-md-6">
-                                        <label for="service_type" class="form-label form-label-custom">Service
-                                            Type</label>
-                                        <select class="form-select form-control-custom" id="service_type"
-                                            name="service_type" required>
-                                            <option value="Printout" selected>Printout (Direct Digital Print)</option>
-                                            <option value="Photocopy">Photocopy (Hardcopy Duplication)</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- Print Type (Black & White vs Color) -->
-                                    <div class="col-md-6">
-                                        <label for="print_type" class="form-label form-label-custom">Print Type</label>
-                                        <select class="form-select form-control-custom" id="print_type"
-                                            name="print_type" required>
-                                            <option value="Black & White" selected>Black & White (B&W)</option>
-                                            <option value="Color">Color Print</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- Number of Pages -->
-                                    <div class="col-md-6">
-                                        <label for="pages" class="form-label form-label-custom">Number of Pages (per
-                                            copy)</label>
-                                        <input type="number" class="form-control form-control-custom" id="pages"
-                                            name="pages" min="1" value="1" required>
-                                        <div class="invalid-feedback">Pages must be at least 1.</div>
-                                    </div>
-
-                                    <!-- Number of Copies -->
-                                    <div class="col-md-6">
-                                        <label for="copies" class="form-label form-label-custom">Number of
-                                            Copies</label>
-                                        <input type="number" class="form-control form-control-custom" id="copies"
-                                            name="copies" min="1" value="1" required>
-                                        <div class="invalid-feedback">Copies must be at least 1.</div>
-                                    </div>
-
-                                    <!-- Pickup Time selection -->
-                                    <div class="col-md-6">
-                                        <label for="pickup_time" class="form-label form-label-custom">Preferred Pickup
-                                            Time</label>
-                                        <select class="form-select form-control-custom" id="pickup_time"
-                                            name="pickup_time" required>
-                                            <option value="" disabled selected>Choose Pickup Time</option>
-                                            <option value="09:30 AM">09:30 AM</option>
-                                            <option value="10:00 AM">10:00 AM</option>
-                                            <option value="10:30 AM">10:30 AM</option>
-                                            <option value="11:00 AM">11:00 AM</option>
-                                            <option value="11:30 AM">11:30 AM</option>
-                                            <option value="12:00 PM">12:00 PM</option>
-                                            <option value="12:30 PM">12:30 PM</option>
-                                            <option value="01:00 PM">01:00 PM</option>
-                                            <option value="01:30 PM">01:30 PM</option>
-                                            <option value="02:00 PM">02:00 PM</option>
-                                            <option value="02:30 PM">02:30 PM</option>
-                                            <option value="03:00 PM">03:00 PM</option>
-                                            <option value="03:30 PM">03:30 PM</option>
-                                            <option value="04:00 PM">04:00 PM</option>
-                                            <option value="04:30 PM">04:30 PM</option>
-                                            <option value="05:00 PM">05:00 PM</option>
-                                        </select>
-                                        <div class="invalid-feedback">Please select a pickup time slot.</div>
-                                    </div>
-
-                                    <!-- Payment Method -->
-                                    <div class="col-md-6">
-                                        <label for="payment_status" class="form-label form-label-custom">Payment
-                                            Method</label>
-                                        <select class="form-select form-control-custom" id="payment_status"
-                                            name="payment_status" required>
-                                            <option value="" disabled selected>Select Payment Method</option>
-                                            <option value="Pay on Pickup">Pay on Pickup (Pay when collecting)</option>
-                                            <option value="Cash">Cash (Pre-paid at Tuck Shop)</option>
-                                            <option value="Online Payment">Online Payment (UPI / QR Code)</option>
-                                        </select>
-                                        <div class="invalid-feedback">Please select a payment method.</div>
-                                    </div>
-
-                                    <!-- Ideathon Feature: Real-time Price Estimator -->
-                                    <div class="col-12 mt-4">
-                                        <div
-                                            class="cost-summary-card d-flex align-items-center justify-content-between">
-                                            <div>
-                                                <h6 class="fw-bold mb-1 text-primary"><i
-                                                        class="bi bi-tag-fill me-1"></i>Estimated Total Price</h6>
-                                                <small class="text-muted">Calculated instantly based on
-                                                    selections</small>
-                                            </div>
-                                            <div class="text-end">
-                                                <span class="fs-3 fw-bold text-dark" id="estimatedPrice">₹2.00</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Submit Button -->
-                                    <div class="col-12 mt-4">
-                                        <button type="submit"
-                                            class="btn btn-primary-custom w-100 py-3 text-uppercase fw-bold letter-spacing-1">
-                                            <i class="bi bi-check-circle-fill me-2"></i>Generate Token & Place Order
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
+                <!-- Tuck Shop Live Status & Waiting Info -->
+                <div class="card">
+                    <h3 class="card-title">
+                        <span class="card-title-icon"><i class="bi bi-clock-history"></i></span>
+                        Shop Live Status
+                    </h3>
+                    <div class="queue-status-box">
+                        <div class="status-row">
+                            <span class="status-label">Shop Status:</span>
+                            <span class="status-value text-success"><i class="bi bi-check-circle-fill"></i> Open
+                                Now</span>
+                        </div>
+                        <div class="status-row">
+                            <span class="status-label">Active Queue:</span>
+                            <span class="status-value" id="activeQueueCount">3 Orders Pending</span>
+                        </div>
+                        <div class="status-row">
+                            <span class="status-label">Estimated Queue Wait:</span>
+                            <span class="status-value">~10 minutes</span>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- 4.5. TRACK ORDER SECTION -->
-    <section id="track-order" class="py-5 bg-light border-bottom border-light-subtle">
-        <div class="container py-4">
-            <div class="row justify-content-center">
-                <div class="col-lg-6 text-center">
-                    <h2 class="fw-bold mb-2">Track Your Order Status</h2>
-                    <p class="text-muted mb-4">Enter your 3-digit Token Number below to track progress or cancel unpaid
-                        requests.</p>
-
-                    <div class="card-custom bg-white p-4 shadow-sm text-start">
-                        <!-- Search Box -->
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control form-control-custom" id="trackTokenInput"
-                                placeholder="Enter Token Number (e.g. 058)" aria-label="Token Number">
-                            <button class="btn btn-primary-custom px-4" type="button" onclick="trackOrder()">Track
-                                Status</button>
-                        </div>
-
-                        <!-- Tracking Result Area (Hidden initially) -->
-                        <div id="trackingResult" class="d-none text-start mt-4 pt-3 border-top border-light-subtle">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="fw-bold m-0" id="resultTokenHeader">Token #058</h5>
-                                <span
-                                    class="badge bg-warning bg-opacity-10 text-warning px-3 py-1.5 rounded-pill fw-bold"
-                                    id="resultStatusBadge">Pending</span>
-                            </div>
-
-                            <!-- Summary Details -->
-                            <div class="p-3 bg-light rounded-3 mb-3 small">
-                                <div class="row g-2">
-                                    <div class="col-6 text-muted">Student Name:</div>
-                                    <div class="col-6 fw-semibold text-end text-dark" id="resultName">Rohan Sharma</div>
-
-                                    <div class="col-6 text-muted">Roll Number:</div>
-                                    <div class="col-6 fw-semibold text-end text-dark" id="resultRoll">21BCE0432</div>
-
-                                    <div class="col-6 text-muted">Service & Print Type:</div>
-                                    <div class="col-6 fw-semibold text-end text-dark" id="resultService">Printout
-                                        (Color)</div>
-
-                                    <div class="col-6 text-muted">Pickup Time:</div>
-                                    <div class="col-6 fw-semibold text-end text-dark" id="resultPickup">12:30 PM</div>
-
-                                    <div class="col-6 text-muted">Payment Method:</div>
-                                    <div class="col-6 fw-semibold text-end text-dark" id="resultPayment">Pay on Pickup
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Cancel and Wait Time Section -->
-                            <div id="resultCancelSection" class="d-none pt-2 text-center">
-                                <button class="btn btn-outline-danger w-100 py-2.5 mb-2 fw-semibold" id="cancelOrderBtn"
-                                    onclick="cancelTrackedOrder()">
-                                    <i class="bi bi-x-circle me-1"></i> Cancel Print Request
-                                </button>
-                                <div class="text-muted small" id="resultWaitTime">
-                                    Estimated queue processing time: <strong>6 minutes</strong> ahead of you.
-                                </div>
-                            </div>
-
-                            <div id="resultProcessingLockMsg"
-                                class="d-none text-center pt-2 small text-danger fw-semibold">
-                                <i class="bi bi-lock-fill me-1"></i> Printing started. Cancellation is locked.
-                            </div>
-                        </div>
-
-                        <!-- Not Found Alert -->
-                        <div id="trackingNotFound" class="alert alert-danger d-none mt-3 small text-center mb-0">
-                            <i class="bi bi-exclamation-circle-fill me-1"></i> Token number not found. Please verify and
-                            try again.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 5. HOW IT WORKS SECTION -->
-    <section id="how-it-works" class="py-5 bg-white border-top border-bottom border-light-subtle">
-        <div class="container py-4">
-            <div class="text-center mb-5">
-                <h2 class="fw-bold">How PrintEase Works</h2>
-                <p class="text-muted">Four simple steps to digitize your college printing experience</p>
-            </div>
-
-            <div class="row g-4 timeline-container">
-                <!-- Step 1 -->
-                <div class="col-md-3">
-                    <div class="timeline-step">
-                        <div class="timeline-badge">1</div>
-                        <div class="icon-box icon-box-primary mx-auto mt-2">
-                            <i class="bi bi-file-earmark-arrow-up fs-3"></i>
-                        </div>
-                        <h5 class="fw-bold">Upload PDF</h5>
-                        <p class="text-muted small m-0">Upload your academic assignment, project paper, or form in PDF
-                            format.</p>
-                    </div>
-                </div>
-                <!-- Step 2 -->
-                <div class="col-md-3">
-                    <div class="timeline-step">
-                        <div class="timeline-badge">2</div>
-                        <div class="icon-box icon-box-secondary mx-auto mt-2">
-                            <i class="bi bi-sliders fs-3"></i>
-                        </div>
-                        <h5 class="fw-bold">Select Options</h5>
-                        <p class="text-muted small m-0">Choose B&W or color, number of pages, copies, and preferred
-                            service type.</p>
-                    </div>
-                </div>
-                <!-- Step 3 -->
-                <div class="col-md-3">
-                    <div class="timeline-step">
-                        <div class="timeline-badge">3</div>
-                        <div class="icon-box icon-box-primary mx-auto mt-2">
-                            <i class="bi bi-clock-fill fs-3"></i>
-                        </div>
-                        <h5 class="fw-bold">Choose Pickup Time</h5>
-                        <p class="text-muted small m-0">Pick a time that matches your break, free lecture, or workshop
-                            schedules.</p>
-                    </div>
-                </div>
-                <!-- Step 4 -->
-                <div class="col-md-3">
-                    <div class="timeline-step">
-                        <div class="timeline-badge">4</div>
-                        <div class="icon-box icon-box-secondary mx-auto mt-2">
-                            <i class="bi bi-check2-square fs-3"></i>
-                        </div>
-                        <h5 class="fw-bold">Collect with Token</h5>
-                        <p class="text-muted small m-0">Get your unique digital token. Show it at the counter, pay, and
-                            collect.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 6. STATISTICS SECTION -->
-    <section id="stats" class="py-5">
-        <div class="container py-4">
-            <div class="text-center mb-5">
-                <h2 class="fw-bold">Tuck Shop Live Dashboard</h2>
-                <p class="text-muted">Real-time status of orders processed today</p>
-            </div>
-
-            <div class="row g-4">
-                <!-- Stat Card 1 -->
-                <div class="col-md-4">
-                    <div class="card-custom stat-card p-4">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <span class="text-muted small text-uppercase fw-semibold">Total Orders Today</span>
-                                <div class="stat-number mt-1">142</div>
-                            </div>
-                            <div class="icon-box icon-box-primary m-0">
-                                <i class="bi bi-grid-fill fs-4"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Stat Card 2 -->
-                <div class="col-md-4">
-                    <div class="card-custom stat-card-pending p-4">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <span class="text-muted small text-uppercase fw-semibold">Pending Orders</span>
-                                <div class="stat-number mt-1 text-warning">12</div>
-                            </div>
-                            <div class="icon-box m-0 text-warning" style="background: rgba(245, 158, 11, 0.08);">
-                                <i class="bi bi-hourglass-split fs-4"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Stat Card 3 -->
-                <div class="col-md-4">
-                    <div class="card-custom stat-card-completed p-4">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <span class="text-muted small text-uppercase fw-semibold">Completed Orders</span>
-                                <div class="stat-number mt-1 text-success">130</div>
-                            </div>
-                            <div class="icon-box m-0 text-success" style="background: rgba(16, 185, 129, 0.08);">
-                                <i class="bi bi-check-all fs-4"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 7. FOOTER SECTION -->
-    <footer class="footer-custom">
-        <div class="container">
-            <div class="row g-4">
-                <!-- Info Column -->
-                <div class="col-lg-5 col-md-6">
-                    <a class="navbar-brand navbar-brand-logo mb-3 d-inline-flex" href="#">
-                        <i class="bi bi-printer-fill text-white"></i>
-                        <span class="text-white">PrintEase</span>
-                    </a>
-                    <p class="text-muted mb-4 pe-lg-5">
-                        A smart, responsive web application resolving tuck shop bottle-necks. Developed in 8 days to
-                        optimize campus logistics, student times, and digital operations.
+                <!-- FAQ Quick tips -->
+                <div class="card">
+                    <h3 class="card-title">
+                        <span class="card-title-icon"><i class="bi bi-lightbulb-fill"></i></span>
+                        Quick Tips
+                    </h3>
+                    <p class="price-sub" style="font-size: 0.85rem; line-height: 1.5; color: var(--text-muted);">
+                        • Set your pickup time to matching lunch breaks or free lectures to save maximum time.<br><br>
+                        • Keep your generated token ready on your mobile when arriving at the counter.
                     </p>
                 </div>
 
-                <!-- Quick Links Column -->
-                <div class="col-lg-3 col-md-6 col-6">
-                    <h5 class="mb-3">Quick Navigation</h5>
-                    <ul class="list-unstyled d-flex flex-column gap-2">
-                        <li><a href="#hero" class="footer-link">Home</a></li>
-                        <li><a href="#services" class="footer-link">Services</a></li>
-                        <li><a href="#order-form-section" class="footer-link">Place Order</a></li>
-                        <li><a href="#how-it-works" class="footer-link">How It Works</a></li>
-                    </ul>
-                </div>
+            </aside>
+        </div>
+    </main>
 
-                <!-- Team / Contact Column -->
-                <div class="col-lg-4 col-md-6 col-6">
-                    <h5 class="mb-3">Project Details</h5>
-                    <ul class="list-unstyled d-flex flex-column gap-2 text-muted">
-                        <li><i class="bi bi-people me-2"></i><strong>Team Name:</strong> ByteCrafters</li>
-                        <li><i class="bi bi-person-circle me-2"></i><strong>Developers:</strong> Student A & Student B
-                        </li>
-                        <li><i class="bi bi-envelope-fill me-2"></i>support-printease@college.edu</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Bottom Copyright -->
-            <div class="footer-bottom text-center">
-                <p class="m-0 text-muted small">&copy; 2026 PrintEase. All Rights Reserved. Built with <i
-                        class="bi bi-heart-fill text-danger mx-1"></i> for College Ideathon.</p>
-            </div>
+    <!-- 4. FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 PrintEase Tuck Shop Portal. All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- Bootstrap 5 Bundle JS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Interactive Client-side Script (Price Calculator & UI interactions) -->
+    <!-- Interactive JS Calculations (Task 3) -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // --- 1. BOOTSTRAP FORM VALIDATION & DYNAMIC ORDER TOKEN GENERATION ---
-            const form = document.querySelector('.needs-validation');
-            form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    form.classList.add('was-validated');
-                    return;
-                }
-
-                event.preventDefault(); // Stop page reload for dynamic presentation flow
-
-                // Get form inputs
-                const name = document.getElementById('student_name').value;
-                const roll = document.getElementById('roll_number').value;
-                const service = document.getElementById('service_type').value;
-                const fileInput = document.getElementById('pdf_file');
-                const fileName = (service === "Printout" && fileInput.files.length > 0) ? fileInput.files[0].name : "Physical Copy (No File)";
-                const printType = document.getElementById('print_type').value;
-                const pages = document.getElementById('pages').value;
-                const copies = document.getElementById('copies').value;
-                const pickup = document.getElementById('pickup_time').value;
-                const payment = document.getElementById('payment_status').value;
-                const price = document.getElementById('estimatedPrice').textContent;
-
-                // --- SCORING-BASED PRIORITY LOGIC ---
-                // Already Paid (Cash/Online) gets 10 points. Pay on Pickup gets 0 points.
-                let paymentScore = 0;
-                if (payment === "Cash" || payment === "Online Payment") {
-                    paymentScore = 10;
-                }
-
-                // Time Priority Score: earlier times get more points (Starts at 09:30 AM = 16 pts down to 05:00 PM = 1 pt)
-                const timeWeights = {
-                    "09:30 AM": 16, "10:00 AM": 15, "10:30 AM": 14, "11:00 AM": 13,
-                    "11:30 AM": 12, "12:00 PM": 11, "12:30 PM": 10, "01:00 PM": 9,
-                    "01:30 PM": 8, "02:00 PM": 7, "02:30 PM": 6, "03:00 PM": 5,
-                    "03:30 PM": 4, "04:00 PM": 3, "04:30 PM": 2, "05:00 PM": 1
-                };
-                const timeScore = timeWeights[pickup] || 0;
-                const totalScore = paymentScore + timeScore;
-
-                let priorityLabel = "Low";
-                if (totalScore >= 20) {
-                    priorityLabel = "High";      // High: Paid and Early Pickup
-                } else if (totalScore >= 10) {
-                    priorityLabel = "Medium";    // Medium: Paid (Late) OR Unpaid (Early)
-                } else {
-                    priorityLabel = "Low";       // Low: Unpaid and Late Pickup
-                }
-
-                // Generate token number as a 3-digit number (e.g. 102 to 999)
-                const generatedToken = Math.floor(100 + Math.random() * 900).toString();
-
-                // Save this specific order to local storage for success page
-                const currentOrder = {
-                    token: generatedToken,
-                    name: name,
-                    roll: roll,
-                    service: `${service} (${printType})`,
-                    qty: `${pages} Pages • ${copies} Copies`,
-                    price: price,
-                    pickup: pickup,
-                    payment: payment,
-                    priority: priorityLabel,
-                    status: "Pending",
-                    fileName: fileName
-                };
-                localStorage.setItem('currentOrder', JSON.stringify(currentOrder));
-
-                // Add to list of all active queue orders (sorted by priority)
-                // Default mock orders if none exist
-                const defaultMockOrders = [
-                    { token: "185", name: "Sameer Sen", roll: "20BME0881", service: "Scan (Document)", qty: "4 Pages • 1 Copy", price: "₹20.00", pickup: "11:00 AM (Mid-Session Break)", payment: "Cash", priority: "High", status: "Completed", fileName: "ID_card.pdf" },
-                    { token: "249", name: "Ananya Patel", roll: "21BCE0115", service: "Photocopy (B&W)", qty: "8 Pages • 5 Copies", price: "₹80.00", pickup: "02:00 PM (Afternoon break)", payment: "Online Payment", priority: "High", status: "Pending", fileName: "lab_report.pdf" },
-                    { token: "058", name: "Rohan Sharma", roll: "21BCE0432", service: "Printout (Color)", qty: "12 Pages • 2 Copies", price: "₹240.00", pickup: "12:30 PM (Lunch Break)", payment: "Pay on Pickup", priority: "Medium", status: "Pending", fileName: "assignment_v2.pdf" }
-                ];
-
-                let allOrders = JSON.parse(localStorage.getItem('allOrders')) || defaultMockOrders;
-
-                // Add new order
-                allOrders.push(currentOrder);
-                localStorage.setItem('allOrders', JSON.stringify(allOrders));
-
-                // Redirect to success view
-                window.location.href = "success.html";
-            }, false);
-
-            // --- 2. FILE UPLOAD INTERACTIVE FEEDBACK ---
-            const fileInput = document.getElementById('pdf_file');
-            const uploadArea = document.getElementById('uploadArea');
-            const uploadTitle = document.getElementById('uploadTitle');
-            const uploadSub = document.getElementById('uploadSub');
-            const fileFeedback = document.getElementById('fileFeedback');
-
-            fileInput.addEventListener('change', function (e) {
-                if (fileInput.files.length > 0) {
-                    const file = fileInput.files[0];
-                    if (file.type === "application/pdf") {
-                        const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-                        uploadTitle.innerHTML = `<i class="bi bi-file-earmark-check-fill text-success fs-4 me-1"></i> ${file.name}`;
-                        uploadSub.textContent = `File Size: ${fileSizeMB} MB - Ready to upload`;
-                        uploadArea.style.borderColor = "#10b981"; // success color
-                        uploadArea.style.backgroundColor = "rgba(16, 185, 129, 0.02)";
-                        fileFeedback.classList.add('d-none');
-                        fileInput.setCustomValidity("");
-                    } else {
-                        // Invalid file type
-                        uploadTitle.textContent = "Invalid File Format";
-                        uploadSub.textContent = "Please upload a valid PDF document";
-                        uploadArea.style.borderColor = "#dc3545"; // danger color
-                        uploadArea.style.backgroundColor = "rgba(220, 53, 69, 0.02)";
-                        fileFeedback.classList.remove('d-none');
-                        fileInput.setCustomValidity("Invalid file format");
-                    }
-                }
-            });
-
-            // Drag and drop event listeners to visually show border feedback
-            ['dragenter', 'dragover'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, function () {
-                    uploadArea.classList.add('dragover');
-                }, false);
-            });
-            ['dragleave', 'drop'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, function () {
-                    uploadArea.classList.remove('dragover');
-                }, false);
-            });
-
-            // --- 3. DYNAMIC PRICING CALCULATOR ---
-            const serviceSelect = document.getElementById('service_type');
-            const printSelect = document.getElementById('print_type');
+        document.addEventListener('DOMContentLoaded', () => {
             const pagesInput = document.getElementById('pages');
-            const copiesInput = document.getElementById('copies');
-            const priceDisplay = document.getElementById('estimatedPrice');
+            const printTypeSelect = document.getElementById('print_type');
+            const priceDisplay = document.getElementById('priceDisplay');
+            const priceCalculationText = document.getElementById('priceCalculationText');
 
-            // Unit rates (₹)
-            const rates = {
-                "Printout": { "B&W": 10.00, "Color": 10.00 },
-                "Photocopy": { "B&W": 2.00, "Color": 2.00 }
-            };
+            // Set default pickup time to 30 minutes from now
+            const now = new Date();
+            now.setMinutes(now.getMinutes() + 30);
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('pickup_time').value = `${hours}:${minutes}`;
 
-            function calculatePrice() {
-                const service = serviceSelect.value;
-                const printType = (printSelect.value === "Color") ? "Color" : "B&W";
+            // Real-time calculation logic
+            function updatePrice() {
                 const pages = parseInt(pagesInput.value) || 0;
-                const copies = parseInt(copiesInput.value) || 0;
+                const type = printTypeSelect.value;
+                const rate = type === 'Color' ? 10 : 2;
+                const total = pages * rate;
 
-                // Lookup pricing from rates structure
-                const ratePerPage = rates[service][printType];
-                const totalCost = pages * copies * ratePerPage;
-
-                // Animate or transition price updates
-                priceDisplay.textContent = `₹${totalCost.toFixed(2)}`;
+                priceDisplay.textContent = `₹${total.toFixed(2)}`;
+                priceCalculationText.textContent = `${pages} page${pages > 1 ? 's' : ''} × ₹${rate}.00/page`;
             }
 
-            // Bind change events to calculation triggers
-            serviceSelect.addEventListener('change', () => {
-                calculatePrice();
-                handleServiceChange();
-            });
-            printSelect.addEventListener('change', calculatePrice);
-            pagesInput.addEventListener('input', calculatePrice);
-            copiesInput.addEventListener('input', calculatePrice);
-
-            // Dynamic show/hide of PDF File Upload container
-            const fileUploadContainer = document.getElementById('fileUploadContainer');
-            function handleServiceChange() {
-                if (serviceSelect.value === 'Printout') {
-                    fileUploadContainer.classList.remove('d-none');
-                    fileInput.setAttribute('required', 'required');
-                } else {
-                    fileUploadContainer.classList.add('d-none');
-                    fileInput.removeAttribute('required');
-                }
-            }
-
-            // Trigger initial state
-            calculatePrice();
-            handleServiceChange();
-
-            // --- 4. TUCKSHOP BREAK CHECKER ---
-            const breakBanner = document.getElementById('breakBanner');
-            function checkBreakMode() {
-                const isBreak = localStorage.getItem('tuckshop_break') === 'true';
-                if (isBreak) {
-                    breakBanner.classList.remove('d-none');
-                } else {
-                    breakBanner.classList.add('d-none');
-                }
-            }
-
-            // Check instantly on load and poll every 1s
-            checkBreakMode();
-            setInterval(checkBreakMode, 1000);
+            // Bind events for live feedback
+            pagesInput.addEventListener('input', updatePrice);
+            printTypeSelect.addEventListener('change', updatePrice);
         });
-
-        // --- 5. DYNAMIC ORDER TRACKER & CANCEL LOGIC ---
-        let currentTrackedToken = null;
-
-        function trackOrder() {
-            const tokenInput = document.getElementById('trackTokenInput').value.trim();
-            const trackingResult = document.getElementById('trackingResult');
-            const trackingNotFound = document.getElementById('trackingNotFound');
-
-            if (!tokenInput) {
-                alert("Please enter a token number.");
-                return;
-            }
-
-            // Get orders
-            const defaultMockOrders = [
-                { token: "185", name: "Sameer Sen", roll: "20BME0881", service: "Scan (Document)", qty: "4 Pages • 1 Copy", price: "₹20.00", pickup: "11:00 AM", payment: "Cash", priority: "High", status: "Completed", fileName: "ID_card.pdf" },
-                { token: "249", name: "Ananya Patel", roll: "21BCE0115", service: "Photocopy (B&W)", qty: "8 Pages • 5 Copies", price: "₹80.00", pickup: "02:00 PM", payment: "Online Payment", priority: "High", status: "Pending", fileName: "lab_report.pdf" },
-                { token: "058", name: "Rohan Sharma", roll: "21BCE0432", service: "Printout (Color)", qty: "12 Pages • 2 Copies", price: "₹240.00", pickup: "12:30 PM", payment: "Pay on Pickup", priority: "Medium", status: "Pending", fileName: "assignment_v2.pdf" }
-            ];
-            let allOrders = JSON.parse(localStorage.getItem('allOrders')) || defaultMockOrders;
-
-            // Search matching order
-            const order = allOrders.find(o => o.token === tokenInput);
-
-            if (!order) {
-                trackingNotFound.classList.remove('d-none');
-                trackingResult.classList.add('d-none');
-                currentTrackedToken = null;
-                return;
-            }
-
-            // Populate view details
-            trackingNotFound.classList.add('d-none');
-            trackingResult.classList.remove('d-none');
-            currentTrackedToken = order.token;
-
-            document.getElementById('resultTokenHeader').textContent = `Token #${order.token}`;
-            document.getElementById('resultName').textContent = order.name;
-            document.getElementById('resultRoll').textContent = order.roll;
-            document.getElementById('resultService').textContent = order.service;
-            document.getElementById('resultPickup').textContent = order.pickup;
-            document.getElementById('resultPayment').textContent = order.payment;
-
-            // Status badge styling
-            const badge = document.getElementById('resultStatusBadge');
-            badge.textContent = order.status;
-            badge.className = "badge px-3 py-1.5 rounded-pill fw-bold ";
-            if (order.status === "Completed") {
-                badge.className += "bg-success bg-opacity-10 text-success";
-            } else if (order.status === "Canceled" || order.status === "Cancelled") {
-                badge.className += "bg-danger bg-opacity-10 text-danger";
-            } else {
-                badge.className += "bg-warning bg-opacity-10 text-warning";
-            }
-
-            // Cancellation option logic: Only if Pending
-            const cancelSection = document.getElementById('resultCancelSection');
-            const lockMsg = document.getElementById('resultProcessingLockMsg');
-
-            cancelSection.classList.add('d-none');
-            lockMsg.classList.add('d-none');
-
-            if (order.status === "Pending") {
-                // Find position in queue to compute dynamic wait time
-                const pendingOrders = allOrders.filter(o => o.status === "Pending");
-                // Sort pending orders exactly matching admin priorities (High -> Medium -> Low)
-                const priorityWeights = { "High": 3, "Medium": 2, "Low": 1 };
-                pendingOrders.sort((a, b) => priorityWeights[b.priority] - priorityWeights[a.priority]);
-
-                const queueIndex = pendingOrders.findIndex(o => o.token === order.token);
-
-                if (queueIndex > 0) {
-                    // Show cancel button if payment method is unpaid ("Pay on Pickup")
-                    if (order.payment === "Pay on Pickup") {
-                        cancelSection.classList.remove('d-none');
-                        // Calculate wait time based on index (3 minutes per order)
-                        const totalWaitTime = queueIndex * 3;
-                        document.getElementById('resultWaitTime').innerHTML = `
-                            Estimated wait: <strong>${totalWaitTime} minutes</strong> until print starts. You can cancel during this window.
-                        `;
-                    } else {
-                        // If paid, show wait time but hide cancel option
-                        lockMsg.classList.remove('d-none');
-                        const totalWaitTime = queueIndex * 3;
-                        lockMsg.innerHTML = `<i class="bi bi-info-circle-fill me-1 text-primary"></i> Estimated wait: <strong>${totalWaitTime} mins</strong>. Paid orders cannot be cancelled.`;
-                    }
-                } else if (queueIndex === 0) {
-                    // Printing in progress (next item in queue)
-                    lockMsg.classList.remove('d-none');
-                    lockMsg.innerHTML = `<i class="bi bi-clock-fill animate-pulse me-1 text-danger"></i> Printing in progress (Est. wait < 2 mins). Cancellation is locked.`;
-                }
-            }
-        }
-
-        function cancelTrackedOrder() {
-            if (!currentTrackedToken) return;
-
-            if (confirm(`Are you sure you want to cancel order #${currentTrackedToken}?`)) {
-                let allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
-                // Update status to Canceled in the list to preserve history or filter it out.
-                // Let's filter it out so it matches local order cancellation.
-                allOrders = allOrders.filter(o => o.token !== currentTrackedToken);
-                localStorage.setItem('allOrders', JSON.stringify(allOrders));
-
-                // Clear student's current order if matches
-                const currentOrder = JSON.parse(localStorage.getItem('currentOrder'));
-                if (currentOrder && currentOrder.token === currentTrackedToken) {
-                    localStorage.removeItem('currentOrder');
-                }
-
-                alert("Your print order has been canceled successfully.");
-
-                // Hide tracking result area
-                document.getElementById('trackingResult').classList.add('d-none');
-                document.getElementById('trackTokenInput').value = '';
-            }
-        }
     </script>
 </body>
 
