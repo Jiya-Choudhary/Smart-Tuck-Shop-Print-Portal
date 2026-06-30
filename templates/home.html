@@ -75,12 +75,16 @@
                         </div>
                     </div>
 
-                    <!-- Form Row: Page Count & Print Type -->
-                    <div class="form-row-split">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 20px; margin-bottom: 20px;">
                         <div class="form-group">
                             <label for="pages">Number of Pages</label>
                             <input type="number" id="pages" name="pages" class="form-control" min="1" value="1"
                                 placeholder="e.g., 10" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="copies">Number of Copies</label>
+                            <input type="number" id="copies" name="copies" class="form-control" min="1" value="1"
+                                placeholder="e.g., 2" required>
                         </div>
                         <div class="form-group">
                             <label for="print_type">Print Type</label>
@@ -113,6 +117,75 @@
                 </form>
             </section>
 
+            <section class="card" style="margin-top: 30px;">
+                <h2 class="card-title">
+                    <span class="card-title-icon"><i class="bi bi-search"></i></span>
+                    Track & Manage Orders
+                </h2>
+
+                {% if request.args.get('success') %}
+                <div class="alert-notice alert-success"
+                    style="background-color: var(--success-light); border-left-color: var(--success); color: #065f46;">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    Order placed successfully! Keep your token ready.
+                </div>
+                {% endif %}
+
+                <form action="/" method="GET" class="order-form">
+                    <div class="form-group">
+                        <label for="search_roll_no">Enter Roll Number to Track</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="search_roll_no" name="roll_no" class="form-control"
+                                placeholder="e.g., 21BCE0432" value="{{ searched_roll_no or '' }}" required>
+                            <button type="submit" class="btn-primary" style="width: auto; padding: 0 20px;">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                {% if searched_roll_no %}
+                <div style="margin-top: 30px;">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 20px;">Orders for {{
+                        searched_roll_no
+                        }}</h3>
+                    {% if orders %}
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        {% for order in orders %}
+                        <div class="order-status-card">
+                            <div class="order-status-header">
+                                <span class="order-status-token">Token #{{ order.token }}</span>
+                                <span class="status-badge status-{{ order.status | lower }}">{{ order.status
+                                    }}</span>
+                            </div>
+                            <div class="order-status-details">
+                                <div><strong>Name:</strong> {{ order.name }}</div>
+                                <div><strong>Details:</strong> {{ order.pages }} pages × {{ order.copies or 1 }}
+                                    copies ({{ order.print_type }})</div>
+                                <div><strong>Pickup Time:</strong> {{ order.pickup_time }}</div>
+                                <div><strong>Payment:</strong> {{ order.payment }}</div>
+                            </div>
+                            {% if order.payment == 'Pay on Pickup' and order.status == 'Pending' %}
+                            <div class="order-status-actions">
+                                <form action="/cancel/{{ order.id }}" method="POST"
+                                    onsubmit="return confirm('Are you sure you want to cancel this order?');">
+                                    <button type="submit" class="btn-danger">
+                                        <i class="bi bi-x-circle-fill"></i> Cancel Order
+                                    </button>
+                                </form>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div style="font-size: 0.95rem; margin-top: 10px; color: var(--text-muted);">No orders found for
+                        this roll number.</div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </section>
+
             <!-- Right Side: Sidebar Live Pricing & Status -->
             <aside class="sidebar-wrapper">
 
@@ -137,11 +210,13 @@
                         </div>
                         <div class="status-row">
                             <span class="status-label">Active Queue:</span>
-                            <span class="status-value" id="activeQueueCount">3 Orders Pending</span>
+                            <span class="status-value" id="activeQueueCount">{{ active_count }} Order{% if
+                                active_count
+                                != 1 %}s{% endif %} Pending</span>
                         </div>
                         <div class="status-row">
                             <span class="status-label">Estimated Queue Wait:</span>
-                            <span class="status-value">~10 minutes</span>
+                            <span class="status-value">~{{ active_count * 3 }} minutes</span>
                         </div>
                     </div>
                 </div>
@@ -153,12 +228,14 @@
                         Quick Tips
                     </h3>
                     <p class="price-sub" style="font-size: 0.85rem; line-height: 1.5; color: var(--text-muted);">
-                        • Set your pickup time to matching lunch breaks or free lectures to save maximum time.<br><br>
+                        • Set your pickup time to matching lunch breaks or free lectures to save maximum
+                        time.<br><br>
                         • Keep your generated token ready on your mobile when arriving at the counter.
                     </p>
                 </div>
 
             </aside>
+        </div>
         </div>
     </main>
 
@@ -169,34 +246,33 @@
         </div>
     </footer>
 
-    <!-- Interactive JS Calculations (Task 3) -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const pagesInput = document.getElementById('pages');
+            const copiesInput = document.getElementById('copies');
             const printTypeSelect = document.getElementById('print_type');
             const priceDisplay = document.getElementById('priceDisplay');
             const priceCalculationText = document.getElementById('priceCalculationText');
 
-            // Set default pickup time to 30 minutes from now
             const now = new Date();
             now.setMinutes(now.getMinutes() + 30);
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
             document.getElementById('pickup_time').value = `${hours}:${minutes}`;
 
-            // Real-time calculation logic
             function updatePrice() {
                 const pages = parseInt(pagesInput.value) || 0;
+                const copies = parseInt(copiesInput.value) || 1;
                 const type = printTypeSelect.value;
                 const rate = type === 'Color' ? 10 : 2;
-                const total = pages * rate;
+                const total = pages * copies * rate;
 
                 priceDisplay.textContent = `₹${total.toFixed(2)}`;
-                priceCalculationText.textContent = `${pages} page${pages > 1 ? 's' : ''} × ₹${rate}.00/page`;
+                priceCalculationText.textContent = `${pages} page${pages > 1 ? 's' : ''} × ${copies} cop${copies > 1 ? 'ies' : 'y'} × ₹${rate}.00/page`;
             }
 
-            // Bind events for live feedback
             pagesInput.addEventListener('input', updatePrice);
+            copiesInput.addEventListener('input', updatePrice);
             printTypeSelect.addEventListener('change', updatePrice);
         });
     </script>
