@@ -55,6 +55,59 @@ def create_table():
 create_table()
 
 
+def update_pending_tokens(conn):
+    cursor = conn.cursor()
+    
+    # Fetch all Pending orders
+    cursor.execute("SELECT * FROM orders WHERE status = 'Pending' ORDER BY id ASC")
+    pending_orders = cursor.fetchall()
+    
+    if not pending_orders:
+        return
+        
+    # Get all active/completed order tokens to find start_token
+    tokens = [o['token'] for o in pending_orders if o['token'] is not None]
+    if tokens:
+        start_token = min(tokens)
+    else:
+        cursor.execute("SELECT MAX(token) FROM orders WHERE status != 'Pending'")
+        row = cursor.fetchone()
+        start_token = (row[0] if row and row[0] is not None else 0) + 1
+        
+    import datetime
+    
+    def get_priority_group(payment, pickup_time_str):
+        try:
+            pickup_h, pickup_m = map(int, pickup_time_str.split(':'))
+            now = datetime.datetime.now()
+            current_minutes = now.hour * 60 + now.minute
+            pickup_minutes = pickup_h * 60 + pickup_m
+            
+            # Early pickup: scheduled within 2 hours (120 mins) from now (including past slots)
+            is_early = (pickup_minutes - current_minutes) <= 120
+        except Exception:
+            is_early = False
+            
+        if payment == 'UPI Online':
+            return 1 if is_early else 3
+        else: # 'Pay on Pickup'
+            return 2 if is_early else 4
+
+    orders_list = []
+    for o in pending_orders:
+        od = dict(o)
+        group = get_priority_group(od['payment'], od['pickup_time'])
+        orders_list.append((group, od['pickup_time'], od['id'], od))
+        
+    # Sort: group (1-4) ASC, pickup_time ASC, id ASC
+    orders_list.sort(key=lambda x: (x[0], x[1], x[2]))
+    
+    # Assign contiguous tokens
+    for i, (_, _, _, od) in enumerate(orders_list):
+        new_token = start_token + i
+        cursor.execute("UPDATE orders SET token = ? WHERE id = ?", (new_token, od['id']))
+
+
 @app.route('/')
 def home():
     conn = get_db_connection()
@@ -95,30 +148,19 @@ def submit():
     conn = get_db_connection()
     cursor = conn.cursor()
     
-    if payment == 'UPI Online':
-        cursor.execute("SELECT MIN(token) FROM orders WHERE payment = 'Pay on Pickup' AND status = 'Pending'")
-        row = cursor.fetchone()
-        first_unpaid_token = row[0] if row and row[0] is not None else None
-        
-        if first_unpaid_token is not None:
-            new_token = first_unpaid_token
-            cursor.execute("UPDATE orders SET token = token + 1 WHERE payment = 'Pay on Pickup' AND status = 'Pending' AND token >= ?", (first_unpaid_token,))
-        else:
-            cursor.execute("SELECT MAX(token) FROM orders")
-            row_max = cursor.fetchone()
-            max_token = row_max[0] if row_max and row_max[0] is not None else 0
-            new_token = max_token + 1
-    else:
-        cursor.execute("SELECT MAX(token) FROM orders")
-        row_max = cursor.fetchone()
-        max_token = row_max[0] if row_max and row_max[0] is not None else 0
-        new_token = max_token + 1
+    cursor.execute("SELECT MAX(token) FROM orders")
+    row_max = cursor.fetchone()
+    max_token = row_max[0] if row_max and row_max[0] is not None else 0
+    temp_token = max_token + 1
         
     cursor.execute(
         "INSERT INTO orders (token, name, roll_no, pages, copies, print_type, pickup_time, payment, status, task_type, file_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (new_token, name, roll_no, pages, copies, print_type, pickup_time, payment, 'Pending', task_type, file_path)
+        (temp_token, name, roll_no, pages, copies, print_type, pickup_time, payment, 'Pending', task_type, file_path)
     )
     order_id = cursor.lastrowid
+    
+    update_pending_tokens(conn)
+    
     conn.commit()
     conn.close()
     
@@ -150,7 +192,7 @@ def cancel_order(order_id):
     if order:
         if order['payment'] == 'Pay on Pickup' and order['status'] == 'Pending':
             cursor.execute("UPDATE orders SET status = 'Cancelled' WHERE id = ?", (order_id,))
-            cursor.execute("UPDATE orders SET token = token - 1 WHERE payment = 'Pay on Pickup' AND status = 'Pending' AND token > ?", (order['token'],))
+            update_pending_tokens(conn)
             conn.commit()
             
     conn.close()
@@ -175,6 +217,7 @@ def admin_update(order_id):
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("UPDATE orders SET status = ? WHERE id = ?", (status, order_id))
+        update_pending_tokens(conn)
         conn.commit()
         conn.close()
     return redirect("/admin")

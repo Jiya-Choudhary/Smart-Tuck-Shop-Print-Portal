@@ -37,9 +37,15 @@
                     <h1 class="ticket-token-value">#{{ order.token }}</h1>
                 </div>
 
+                <!-- Perforated ticket separator with side notches -->
+                <div class="ticket-perforation">
+                    <div class="notch notch-left"></div>
+                    <div class="ticket-divider"></div>
+                    <div class="notch notch-right"></div>
+                </div>
+
                 <div class="ticket-body">
-                    <div class="alert-notice alert-success"
-                        style="background-color: var(--success-light); border-left-color: var(--success); color: #065f46; margin-bottom: 24px; text-align: center;">
+                    <div class="alert-notice alert-success" style="text-align: center; margin-bottom: 24px;">
                         <i class="bi bi-check-circle-fill me-2"></i>
                         Order Placed Successfully!
                     </div>
@@ -47,66 +53,72 @@
                     <div class="ticket-details-grid">
                         <div class="detail-item">
                             <span class="detail-label">Student Name</span>
-                            <span class="detail-value">{{ order.name }}</span>
+                            <span class="detail-value">
+                                <i class="bi bi-person-fill"></i>
+                                {{ order.name }}
+                            </span>
                         </div>
                         <div class="detail-item">
                             <span class="detail-label">Roll Number</span>
-                            <span class="detail-value">{{ order.roll_no }}</span>
+                            <span class="detail-value">
+                                <i class="bi bi-card-text"></i>
+                                {{ order.roll_no }}
+                            </span>
                         </div>
                         <div class="detail-item">
                             <span class="detail-label">Task Type</span>
                             <span class="detail-value">
-                                <i
-                                    class="bi {% if order.task_type == 'Print Out' %}bi-printer-fill{% else %}bi-copy{% endif %} me-1"></i>
+                                <i class="bi {% if order.task_type == 'Print Out' %}bi-printer-fill{% else %}bi-copy{% endif %}"></i>
                                 {{ order.task_type }}
                             </span>
                         </div>
                         <div class="detail-item">
                             <span class="detail-label">Print Specification</span>
-                            <span class="detail-value">{{ order.print_type }} ({{ order.pages }} pgs × {{ order.copies
-                                or 1 }} cps)</span>
+                            <span class="detail-value">
+                                <i class="bi bi-file-earmark-text"></i>
+                                {{ order.print_type }} ({{ order.pages }} pgs × {{ order.copies or 1 }} cps)
+                            </span>
                         </div>
                         <div class="detail-item">
                             <span class="detail-label">Scheduled Pickup</span>
-                            <span class="detail-value" style="color: var(--primary); font-weight: 700;">{{
-                                order.pickup_time }}</span>
+                            <span class="detail-value" style="color: var(--primary); font-weight: 700;">
+                                <i class="bi bi-clock-fill"></i>
+                                {{ order.pickup_time }}
+                            </span>
                         </div>
                         <div class="detail-item">
                             <span class="detail-label">Estimated Amount</span>
                             <span class="detail-value" style="color: var(--text-main); font-weight: 700;">
+                                <i class="bi bi-currency-rupee"></i>
                                 ₹{{ order.pages * (order.copies or 1) * (10 if order.print_type == 'Color' else 2) }}.00
                             </span>
                         </div>
                         <div class="detail-item" style="grid-column: span 2;">
                             <span class="detail-label">Payment Option</span>
-                            <span class="detail-value">{{ order.payment }}</span>
+                            <span class="detail-value">
+                                <i class="bi bi-wallet2"></i>
+                                {{ order.payment }}
+                            </span>
                         </div>
                         {% if order.file_path %}
                         <div class="detail-item" style="grid-column: span 2;">
                             <span class="detail-label">Uploaded Document</span>
-                            <span class="detail-value"
-                                style="word-break: break-all; font-weight: 500; font-size: 0.85rem; color: var(--text-muted);">
-                                <i class="bi bi-file-earmark-check me-1"></i> {{ order.file_path.split('_', 1)[1] if '_'
-                                in order.file_path else order.file_path }}
+                            <span class="detail-value" style="word-break: break-all; font-weight: 500; font-size: 0.85rem; color: var(--text-muted);">
+                                <i class="bi bi-file-earmark-check"></i>
+                                {{ order.file_path.split('_', 1)[1] if '_' in order.file_path else order.file_path }}
                             </span>
                         </div>
                         {% endif %}
                     </div>
-
-                    <div class="ticket-divider"></div>
 
                     <div class="ticket-instructions">
                         <h4 class="instructions-title">
                             <i class="bi bi-info-circle-fill" style="color: var(--primary);"></i> Next Steps to Collect
                         </h4>
                         <ol class="instructions-list">
-                            <li>Keep this token screen active or take a screenshot of your token <strong>#{{ order.token
-                                    }}</strong>.</li>
-                            <li>Arrive at the tuck shop counter at your scheduled time: <strong>{{ order.pickup_time
-                                    }}</strong>.</li>
-                            <li>Show the token to the coordinator and make the payment of <strong>₹{{ order.pages *
-                                    (order.copies or 1) * (10 if order.print_type == 'Color' else 2) }}.00</strong> (if
-                                not paid online).</li>
+                            <li>Keep this token screen active or take a screenshot of your token <strong>#{{ order.token }}</strong>.</li>
+                            <li>Arrive at the tuck shop counter at your scheduled time: <strong>{{ order.pickup_time }}</strong>.</li>
+                            <li>Show the token to the coordinator and make the payment of <strong>₹{{ order.pages * (order.copies or 1) * (10 if order.print_type == 'Color' else 2) }}.00</strong> (if not paid online).</li>
                             <li>Collect your printed sheets/copies instantly and bypass the queue!</li>
                         </ol>
                     </div>
