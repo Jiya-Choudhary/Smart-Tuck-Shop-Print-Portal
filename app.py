@@ -55,6 +55,15 @@ def create_table():
 create_table()
 
 
+def parse_token_num(token_val):
+    if token_val is None:
+        return 0
+    if isinstance(token_val, int):
+        return token_val
+    digits = ''.join(c for c in str(token_val) if c.isdigit())
+    return int(digits) if digits else 0
+
+
 def update_pending_tokens(conn):
     cursor = conn.cursor()
     
@@ -66,13 +75,14 @@ def update_pending_tokens(conn):
         return
         
     # Get all active/completed order tokens to find start_token
-    tokens = [o['token'] for o in pending_orders if o['token'] is not None]
-    if tokens:
-        start_token = min(tokens)
+    token_nums = [parse_token_num(o['token']) for o in pending_orders if o['token'] is not None]
+    if token_nums:
+        start_token = min(token_nums)
     else:
-        cursor.execute("SELECT MAX(token) FROM orders WHERE status != 'Pending'")
-        row = cursor.fetchone()
-        start_token = (row[0] if row and row[0] is not None else 0) + 1
+        cursor.execute("SELECT token FROM orders WHERE status != 'Pending'")
+        rows = cursor.fetchall()
+        other_tokens = [parse_token_num(r[0]) for r in rows if r[0] is not None]
+        start_token = max(other_tokens) + 1 if other_tokens else 1
         
     import datetime
     
@@ -102,9 +112,11 @@ def update_pending_tokens(conn):
     # Sort: group (1-4) ASC, pickup_time ASC, id ASC
     orders_list.sort(key=lambda x: (x[0], x[1], x[2]))
     
-    # Assign contiguous tokens
-    for i, (_, _, _, od) in enumerate(orders_list):
-        new_token = start_token + i
+    # Assign contiguous tokens (e.g. A0012, B0013)
+    for i, (group, _, _, od) in enumerate(orders_list):
+        char = {1: 'A', 2: 'B', 3: 'C', 4: 'D'}[group]
+        new_token_num = start_token + i
+        new_token = f"{char}{new_token_num:04d}"
         cursor.execute("UPDATE orders SET token = ? WHERE id = ?", (new_token, od['id']))
 
 
@@ -148,10 +160,11 @@ def submit():
     conn = get_db_connection()
     cursor = conn.cursor()
     
-    cursor.execute("SELECT MAX(token) FROM orders")
-    row_max = cursor.fetchone()
-    max_token = row_max[0] if row_max and row_max[0] is not None else 0
-    temp_token = max_token + 1
+    cursor.execute("SELECT token FROM orders")
+    rows = cursor.fetchall()
+    all_tokens = [parse_token_num(r[0]) for r in rows if r[0] is not None]
+    max_token_num = max(all_tokens) if all_tokens else 0
+    temp_token = f"T{max_token_num + 1:04d}"
         
     cursor.execute(
         "INSERT INTO orders (token, name, roll_no, pages, copies, print_type, pickup_time, payment, status, task_type, file_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",

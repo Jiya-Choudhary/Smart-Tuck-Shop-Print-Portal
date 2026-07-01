@@ -20,6 +20,9 @@
             <nav>
                 <ul class="nav-links">
                     <li><a href="/" class="active">Student Portal</a></li>
+                    <li><a href="/#search_roll_no"><i class="bi bi-search me-1"></i>Track Order</a></li>
+                    <li><a href="#" id="rateListLink"><i class="bi bi-tags-fill me-1"></i>Rate List</a></li>
+                    <li><a href="#" id="faqsLink"><i class="bi bi-question-circle-fill me-1"></i>Help & FAQs</a></li>
                     <li><a href="/admin">Admin Dashboard</a></li>
                 </ul>
             </nav>
@@ -139,6 +142,122 @@
         </div>
     </footer>
 
+    <!-- Rates Modal -->
+    <div id="rateListModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="bi bi-tags-fill text-primary"></i> Printing & Photocopy Rates</h3>
+                <button class="modal-close" id="closeRates">&times;</button>
+            </div>
+            <div class="modal-body">
+                <table class="rates-table">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Specification</th>
+                            <th>Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Print Out (B&W)</strong></td>
+                            <td>Standard A4 page</td>
+                            <td>₹2.00 / page</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Print Out (Color)</strong></td>
+                            <td>Standard A4 page</td>
+                            <td>₹10.00 / page</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Photostat (B&W)</strong></td>
+                            <td>Single / Double sided copying</td>
+                            <td>₹2.00 / page</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Document Scanning</strong></td>
+                            <td>Scan to PDF / Email</td>
+                            <td>₹5.00 / page</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Spiral Binding</strong></td>
+                            <td>Spiral comb + cover sheet</td>
+                            <td>₹30.00 / booklet</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQs Modal -->
+    <div id="faqsModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="bi bi-question-circle-fill text-primary"></i> Help & Support FAQ</h3>
+                <button class="modal-close" id="closeFaqs">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="faq-accordion">
+                    <div class="faq-item">
+                        <div class="faq-question">How does the priority queue work?</div>
+                        <div class="faq-answer">Orders are prioritized based on payment status (Paid orders first) and pickup urgency. Early pickup times get processed first.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">Can I cancel my order?</div>
+                        <div class="faq-answer">Yes, but only for "Pay on Pickup" orders and while the status is still "Pending". Paid orders or orders already processing cannot be cancelled.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">What file formats are supported?</div>
+                        <div class="faq-answer">We support PDF, DOC, DOCX, PNG, JPG, and JPEG. We recommend PDF to avoid formatting layout mismatches.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">What if I miss my scheduled pickup time?</div>
+                        <div class="faq-answer">Your prints will be kept safely at the shop counter for up to 24 hours. Show your token at the desk to collect them.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Modal Open/Close Logic
+            const rateListLink = document.getElementById('rateListLink');
+            const faqsLink = document.getElementById('faqsLink');
+            const rateListModal = document.getElementById('rateListModal');
+            const faqsModal = document.getElementById('faqsModal');
+            const closeRates = document.getElementById('closeRates');
+            const closeFaqs = document.getElementById('closeFaqs');
+
+            function openModal(modal) {
+                modal.classList.add('active');
+            }
+
+            function closeModal(modal) {
+                modal.classList.remove('active');
+            }
+
+            rateListLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                openModal(rateListModal);
+            });
+
+            faqsLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                openModal(faqsModal);
+            });
+
+            closeRates.addEventListener('click', () => closeModal(rateListModal));
+            closeFaqs.addEventListener('click', () => closeModal(faqsModal));
+
+            // Close on clicking overlay
+            window.addEventListener('click', (e) => {
+                if (e.target === rateListModal) closeModal(rateListModal);
+                if (e.target === faqsModal) closeModal(faqsModal);
+            });
+        });
+    </script>
 </body>
 
 </html>
