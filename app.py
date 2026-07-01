@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect
+from werkzeug.utils import secure_filename
 import sqlite3
 import os
+import time
 
 app = Flask(__name__)
 
@@ -30,11 +32,21 @@ def create_table():
             print_type TEXT,
             pickup_time TEXT,
             payment TEXT,
-            status TEXT
+            status TEXT,
+            task_type TEXT DEFAULT 'Print Out',
+            file_path TEXT
         )
     """)
     try:
         cursor.execute("ALTER TABLE orders ADD COLUMN copies INTEGER DEFAULT 1")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE orders ADD COLUMN task_type TEXT DEFAULT 'Print Out'")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE orders ADD COLUMN file_path TEXT")
     except sqlite3.OperationalError:
         pass
     conn.commit()
@@ -69,7 +81,17 @@ def submit():
     print_type = request.form["print_type"]
     pickup_time = request.form["pickup_time"]
     payment = request.form["payment"]
+    task_type = request.form.get("task_type", "Print Out")
     
+    file_path = None
+    if task_type == "Print Out" and "file" in request.files:
+        file = request.files["file"]
+        if file and file.filename != "":
+            filename = secure_filename(file.filename)
+            unique_filename = f"{int(time.time())}_{filename}"
+            file.save(os.path.join(app.config["UPLOAD_FOLDER"], unique_filename))
+            file_path = unique_filename
+
     conn = get_db_connection()
     cursor = conn.cursor()
     
@@ -93,13 +115,28 @@ def submit():
         new_token = max_token + 1
         
     cursor.execute(
-        "INSERT INTO orders (token, name, roll_no, pages, copies, print_type, pickup_time, payment, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (new_token, name, roll_no, pages, copies, print_type, pickup_time, payment, 'Pending')
+        "INSERT INTO orders (token, name, roll_no, pages, copies, print_type, pickup_time, payment, status, task_type, file_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (new_token, name, roll_no, pages, copies, print_type, pickup_time, payment, 'Pending', task_type, file_path)
     )
+    order_id = cursor.lastrowid
     conn.commit()
     conn.close()
     
-    return redirect(f"/?roll_no={roll_no}&success=true")
+    return redirect(f"/success/{order_id}")
+
+
+@app.route("/success/<int:order_id>")
+def success(order_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM orders WHERE id = ?", (order_id,))
+    order = cursor.fetchone()
+    conn.close()
+    
+    if not order:
+        return redirect("/")
+        
+    return render_template("success.html", order=order)
 
 
 @app.route("/cancel/<int:order_id>", methods=["POST"])
