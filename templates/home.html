@@ -35,9 +35,23 @@
 
         <section class="hero-section">
             <div class="banner-card">
+                <div class="banner-badge"><i class="bi bi-lightning-charge-fill"></i> Fast & Queue-Free</div>
                 <h1>Smart Tuck Shop Portal</h1>
-                <p>Skip the long queues at the tuck shop! Upload details of your print/photocopy tasks, select your
-                    preferred pickup time, and collect your prints smoothly using a generated token.</p>
+                <p class="banner-desc">Skip the long queues at the tuck shop! Generate your token online, select a convenient pickup time, and collect your order smoothly.</p>
+                <div class="banner-features">
+                    <div class="bf-item">
+                        <i class="bi bi-cloud-upload-fill"></i>
+                        <span>Upload Documents</span>
+                    </div>
+                    <div class="bf-item">
+                        <i class="bi bi-clock-fill"></i>
+                        <span>Schedule Pickup</span>
+                    </div>
+                    <div class="bf-item">
+                        <i class="bi bi-qr-code-scan"></i>
+                        <span>Collect Instantly</span>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -109,6 +123,16 @@
             </div>
         </section>
 
+        {% if shop_announcement %}
+        <div class="announcement-banner" id="shopAnnouncementBanner">
+            <span class="ann-icon"><i class="bi bi-megaphone-fill"></i></span>
+            <div class="ann-content">
+                <strong>Tuck Shop Notice:</strong> {{ shop_announcement }}
+            </div>
+            <button type="button" class="ann-close" onclick="document.getElementById('shopAnnouncementBanner').style.display='none';" title="Dismiss">&times;</button>
+        </div>
+        {% endif %}
+
         <div class="portal-grid">
             <section class="card">
                 <h2 class="card-title">
@@ -120,6 +144,13 @@
                     <i class="bi bi-info-circle-fill me-2"></i>
                     Please select your task type. Print orders require file upload, while Photostat does not.
                 </div>
+
+                {% if shop_status == 'closed' %}
+                <div class="alert-notice alert-danger" style="background-color: #fee2e2; border-left: 4px solid #ef4444; color: #991b1b; padding: 14px; border-radius: 8px; font-weight: 600; margin-bottom: 20px; font-size: 0.95rem;">
+                    <i class="bi bi-exclamation-triangle-fill me-2" style="font-size: 1.1rem; vertical-align: -2px;"></i>
+                    Tuck Shop is Closed / On Break. You can still order but you can't get it now. We will process your order after the break.
+                </div>
+                {% endif %}
 
                 <form action="/submit" method="POST" enctype="multipart/form-data" class="order-form"
                     id="printOrderForm">
@@ -182,7 +213,7 @@
                             <label for="print_type">Print Type</label>
                             <select id="print_type" name="print_type" class="form-control" required>
                                 <option value="B&W">Black & White (₹2/page)</option>
-                                <option value="Color">Color (₹10/page)</option>
+                                <option value="Color">Color (₹5/page)</option>
                             </select>
                         </div>
                     </div>
@@ -194,8 +225,8 @@
                         <div class="form-group">
                             <label for="payment">Payment Mode</label>
                             <select id="payment" name="payment" class="form-control" required>
-                                <option value="Pay on Pickup">Pay on Pickup (Cash / UPI)</option>
-                                <option value="UPI Online">UPI (Pay online via QR code)</option>
+                                <option value="UPI Online">Online / UPI payment</option>
+                                <option value="Pay on Pickup">Pay on pickup</option>
                             </select>
                         </div>
                     </div>
@@ -254,7 +285,7 @@
                                 <div><strong>Pickup Time:</strong> {{ order.pickup_time }}</div>
                                 <div><strong>Payment:</strong> {{ order.payment }}</div>
                             </div>
-                            {% if order.payment == 'Pay on Pickup' and order.status == 'Pending' %}
+                            {% if order.payment.startswith('Pay on Pickup') and order.status == 'Pending' %}
                             <div class="order-status-actions">
                                 <form action="/cancel/{{ order.id }}" method="POST"
                                     onsubmit="return confirm('Are you sure you want to cancel this order?');">
@@ -291,7 +322,11 @@
                     <div class="queue-status-box">
                         <div class="status-row">
                             <span class="status-label">Shop Status:</span>
+                            {% if shop_status == 'closed' %}
+                            <span class="status-value text-danger" style="color: #ef4444 !important;"><span class="pulse-dot-red"></span> Closed / On Break</span>
+                            {% else %}
                             <span class="status-value text-success"><span class="pulse-dot"></span> Open Now</span>
+                            {% endif %}
                         </div>
                         <div class="status-row">
                             <span class="status-label">Active Queue:</span>
@@ -355,27 +390,22 @@
                         <tr>
                             <td><strong>Print Out (B&W)</strong></td>
                             <td>Standard A4 page</td>
-                            <td>₹2.00 / page</td>
+                            <td>₹{{ settings.rate_print_bw }} / page</td>
                         </tr>
                         <tr>
                             <td><strong>Print Out (Color)</strong></td>
                             <td>Standard A4 page</td>
-                            <td>₹10.00 / page</td>
+                            <td>₹{{ settings.rate_print_color }} / page</td>
                         </tr>
                         <tr>
                             <td><strong>Photostat (B&W)</strong></td>
                             <td>Single / Double sided copying</td>
-                            <td>₹2.00 / page</td>
+                            <td>₹{{ settings.rate_photo_bw }} / page</td>
                         </tr>
                         <tr>
-                            <td><strong>Document Scanning</strong></td>
-                            <td>Scan to PDF / Email</td>
-                            <td>₹5.00 / page</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Spiral Binding</strong></td>
-                            <td>Spiral comb + cover sheet</td>
-                            <td>₹30.00 / booklet</td>
+                            <td><strong>Photostat (Color)</strong></td>
+                            <td>Single / Double sided copying</td>
+                            <td>₹{{ settings.rate_photo_color }} / page</td>
                         </tr>
                     </tbody>
                 </table>
@@ -456,10 +486,20 @@
 
             // Handle switching tasks (Print Out vs Photostat)
             function toggleTaskType() {
+                const ratePrintBW = '{{ settings.rate_print_bw }}';
+                const ratePrintColor = '{{ settings.rate_print_color }}';
+                const ratePhotoBW = '{{ settings.rate_photo_bw }}';
+                const ratePhotoColor = '{{ settings.rate_photo_color }}';
+                
+                const optBW = printTypeSelect.options[0];
+                const optColor = printTypeSelect.options[1];
+
                 if (taskPrintRadio.checked) {
                     fileUploadWrapper.classList.remove('hidden');
                     fileInput.required = true;
                     submitBtn.innerHTML = '<i class="bi bi-lightning-fill"></i> Generate Print Token';
+                    optBW.textContent = `Black & White (₹${ratePrintBW}/page)`;
+                    optColor.textContent = `Color (₹${ratePrintColor}/page)`;
                 } else {
                     fileUploadWrapper.classList.add('hidden');
                     fileInput.required = false;
@@ -469,7 +509,10 @@
                     dropzoneIcon.className = 'bi bi-cloud-arrow-up-fill dropzone-icon';
                     dropzoneIcon.style.color = 'var(--primary)';
                     submitBtn.innerHTML = '<i class="bi bi-lightning-fill"></i> Generate Photostat Token';
+                    optBW.textContent = `Black & White (₹${ratePhotoBW}/page)`;
+                    optColor.textContent = `Color (₹${ratePhotoColor}/page)`;
                 }
+                updatePrice();
             }
 
             taskPrintRadio.addEventListener('change', toggleTaskType);
@@ -492,14 +535,23 @@
             });
 
             function updatePrice() {
+                const ratePrintBW = parseFloat('{{ settings.rate_print_bw }}') || 2.00;
+                const ratePrintColor = parseFloat('{{ settings.rate_print_color }}') || 5.00;
+                const ratePhotoBW = parseFloat('{{ settings.rate_photo_bw }}') || 2.00;
+                const ratePhotoColor = parseFloat('{{ settings.rate_photo_color }}') || 5.00;
+
                 const pages = parseInt(pagesInput.value) || 0;
                 const copies = parseInt(copiesInput.value) || 1;
                 const type = printTypeSelect.value;
-                const rate = type === 'Color' ? 10 : 2;
+                
+                const isPrint = taskPrintRadio.checked;
+                const rate = type === 'Color' 
+                    ? (isPrint ? ratePrintColor : ratePhotoColor)
+                    : (isPrint ? ratePrintBW : ratePhotoBW);
                 const total = pages * copies * rate;
 
                 priceDisplay.textContent = `₹${total.toFixed(2)}`;
-                priceCalculationText.textContent = `${pages} page${pages > 1 ? 's' : ''} × ${copies} cop${copies > 1 ? 'ies' : 'y'} × ₹${rate}.00/page`;
+                priceCalculationText.textContent = `${pages} page${pages > 1 ? 's' : ''} × ${copies} cop${copies > 1 ? 'ies' : 'y'} × ₹${rate.toFixed(2)}/page`;
             }
 
             pagesInput.addEventListener('input', updatePrice);

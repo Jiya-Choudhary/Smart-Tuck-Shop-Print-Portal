@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, send_from_directory
 from werkzeug.utils import secure_filename
 import sqlite3
 import os
@@ -49,6 +49,18 @@ def create_table():
         cursor.execute("ALTER TABLE orders ADD COLUMN file_path TEXT")
     except sqlite3.OperationalError:
         pass
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS settings(
+            key TEXT PRIMARY KEY,
+            value TEXT
+        )
+    """)
+    cursor.execute("INSERT OR IGNORE INTO settings (key, value) VALUES ('shop_status', 'open')")
+    cursor.execute("INSERT OR IGNORE INTO settings (key, value) VALUES ('shop_announcement', '')")
+    cursor.execute("INSERT OR IGNORE INTO settings (key, value) VALUES ('rate_print_bw', '2.00')")
+    cursor.execute("INSERT OR IGNORE INTO settings (key, value) VALUES ('rate_print_color', '5.00')")
+    cursor.execute("INSERT OR IGNORE INTO settings (key, value) VALUES ('rate_photo_bw', '2.00')")
+    cursor.execute("INSERT OR IGNORE INTO settings (key, value) VALUES ('rate_photo_color', '5.00')")
     conn.commit()
     conn.close()
 
@@ -127,6 +139,9 @@ def home():
     cursor.execute("SELECT COUNT(*) FROM orders WHERE status IN ('Pending', 'Processing')")
     active_count = cursor.fetchone()[0]
     
+    cursor.execute("SELECT key, value FROM settings")
+    settings = {row['key']: row['value'] for row in cursor.fetchall()}
+    
     roll_no = request.args.get('roll_no')
     orders = []
     if roll_no:
@@ -134,7 +149,7 @@ def home():
         orders = cursor.fetchall()
     
     conn.close()
-    return render_template("home.html", active_count=active_count, orders=orders, searched_roll_no=roll_no)
+    return render_template("home.html", active_count=active_count, orders=orders, searched_roll_no=roll_no, shop_status=settings.get('shop_status', 'open'), shop_announcement=settings.get('shop_announcement', ''), settings=settings)
 
 
 @app.route("/submit", methods=["POST"])
@@ -186,12 +201,15 @@ def success(order_id):
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM orders WHERE id = ?", (order_id,))
     order = cursor.fetchone()
+    
+    cursor.execute("SELECT key, value FROM settings")
+    settings = {row['key']: row['value'] for row in cursor.fetchall()}
     conn.close()
     
     if not order:
         return redirect("/")
         
-    return render_template("success.html", order=order)
+    return render_template("success.html", order=order, settings=settings)
 
 
 @app.route("/cancel/<int:order_id>", methods=["POST"])
@@ -203,7 +221,7 @@ def cancel_order(order_id):
     order = cursor.fetchone()
     
     if order:
-        if order['payment'] == 'Pay on Pickup' and order['status'] == 'Pending':
+        if order['payment'] and order['payment'].startswith('Pay on Pickup') and order['status'] == 'Pending':
             cursor.execute("UPDATE orders SET status = 'Cancelled' WHERE id = ?", (order_id,))
             update_pending_tokens(conn)
             conn.commit()
@@ -219,8 +237,11 @@ def admin():
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM orders ORDER BY CASE WHEN status = 'Processing' THEN 1 WHEN status = 'Pending' THEN 2 WHEN status = 'Completed' THEN 3 ELSE 4 END, token ASC, id ASC")
     orders = cursor.fetchall()
+    
+    cursor.execute("SELECT key, value FROM settings")
+    settings = {row['key']: row['value'] for row in cursor.fetchall()}
     conn.close()
-    return render_template("admin.html", orders=orders)
+    return render_template("admin.html", orders=orders, shop_status=settings.get('shop_status', 'open'), shop_announcement=settings.get('shop_announcement', ''), settings=settings)
 
 
 @app.route("/admin/update/<int:order_id>", methods=["POST"])
@@ -234,6 +255,160 @@ def admin_update(order_id):
         conn.commit()
         conn.close()
     return redirect("/admin")
+
+
+@app.route("/admin/toggle-shop", methods=["POST"])
+def admin_toggle_shop():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT value FROM settings WHERE key = 'shop_status'")
+    row = cursor.fetchone()
+    current = row[0] if row else 'open'
+    new_status = 'closed' if current == 'open' else 'open'
+    cursor.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('shop_status', ?)", (new_status,))
+    conn.commit()
+    conn.close()
+    return redirect("/admin")
+
+
+@app.route("/admin/toggle-payment/<int:order_id>", methods=["POST"])
+def admin_toggle_payment(order_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT payment FROM orders WHERE id = ?", (order_id,))
+    row = cursor.fetchone()
+    if row:
+        current = row['payment']
+        method = request.form.get("method")
+        if current in ['Pay on Pickup', 'Pay on Pickup (Cash)', 'Pay on Pickup (UPI)']:
+            if method == 'UPI':
+                new_val = 'Pay on Pickup (UPI Paid)'
+            else:
+                new_val = 'Pay on Pickup (Cash Paid)'
+        elif current in ['Pay on Pickup (UPI Paid)', 'Pay on Pickup (Cash Paid)', 'Pay on Pickup (UPI) (Paid)', 'Pay on Pickup (Cash) (Paid)', 'Pay on Pickup (Paid)']:
+            new_val = 'Pay on Pickup'
+        else:
+            new_val = current
+        cursor.execute("UPDATE orders SET payment = ? WHERE id = ?", (new_val, order_id))
+        conn.commit()
+    conn.close()
+    return redirect("/admin")
+
+
+@app.route("/admin/update-announcement", methods=["POST"])
+def admin_update_announcement():
+    announcement = request.form.get("shop_announcement", "").strip()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('shop_announcement', ?)", (announcement,))
+    conn.commit()
+    conn.close()
+    return redirect("/admin")
+
+
+@app.route("/admin/update-rates", methods=["POST"])
+def admin_update_rates():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('rate_print_bw', ?)", (request.form.get('rate_print_bw'),))
+    cursor.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('rate_print_color', ?)", (request.form.get('rate_print_color'),))
+    cursor.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('rate_photo_bw', ?)", (request.form.get('rate_photo_bw'),))
+    cursor.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('rate_photo_color', ?)", (request.form.get('rate_photo_color'),))
+    conn.commit()
+    conn.close()
+    return redirect("/admin")
+
+
+@app.route("/admin/bulk-update", methods=["POST"])
+def admin_bulk_update():
+    status = request.form.get("status")
+    order_ids = request.form.getlist("order_ids")
+    if status in ['Pending', 'Processing', 'Completed', 'Cancelled'] and order_ids:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        ids = [int(x) for x in order_ids if x.isdigit()]
+        if ids:
+            placeholders = ','.join('?' for _ in ids)
+            cursor.execute(f"UPDATE orders SET status = ? WHERE id IN ({placeholders})", [status] + ids)
+            update_pending_tokens(conn)
+            conn.commit()
+        conn.close()
+    return redirect("/admin")
+
+
+@app.route("/admin/export-csv")
+def admin_export_csv():
+    import csv
+    from io import StringIO
+    from flask import make_response
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM orders ORDER BY id DESC")
+    orders = cursor.fetchall()
+    
+    cursor.execute("SELECT key, value FROM settings")
+    settings = {row['key']: row['value'] for row in cursor.fetchall()}
+    conn.close()
+    
+    rate_print_bw = float(settings.get('rate_print_bw', 2.00))
+    rate_print_color = float(settings.get('rate_print_color', 5.00))
+    rate_photo_bw = float(settings.get('rate_photo_bw', 2.00))
+    rate_photo_color = float(settings.get('rate_photo_color', 5.00))
+    
+    si = StringIO()
+    cw = csv.writer(si)
+    cw.writerow(['ID', 'Token', 'Name', 'Roll No', 'Task Type', 'Print Type', 'Pages', 'Copies', 'Total Price (INR)', 'Pickup Time', 'Payment', 'Status', 'File Name'])
+    
+    for o in orders:
+        is_print = o['task_type'] == 'Print Out'
+        rate = rate_print_color if o['print_type'] == 'Color' and is_print else (rate_photo_color if o['print_type'] == 'Color' else (rate_print_bw if is_print else rate_photo_bw))
+        total_price = o['pages'] * (o['copies'] or 1) * rate
+        file_name = o['file_path'].split('_', 1)[1] if o['file_path'] and '_' in o['file_path'] else (o['file_path'] or '-')
+        cw.writerow([
+            o['id'],
+            o['token'],
+            o['name'],
+            o['roll_no'],
+            o['task_type'],
+            o['print_type'],
+            o['pages'],
+            o['copies'] or 1,
+            total_price,
+            o['pickup_time'],
+            o['payment'],
+            o['status'],
+            file_name
+        ])
+        
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = "attachment; filename=tuckshop_orders_report.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
+
+
+@app.route("/admin/orders-api")
+def admin_orders_api():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, status FROM orders")
+    rows = cursor.fetchall()
+    conn.close()
+    
+    max_id = max([r['id'] for r in rows]) if rows else 0
+    status_str = "|".join(f"{r['id']}:{r['status']}" for r in rows)
+    import hashlib
+    status_hash = hashlib.md5(status_str.encode('utf-8')).hexdigest() if rows else ""
+    
+    return {
+        "max_id": max_id,
+        "status_hash": status_hash
+    }
+
+
+@app.route("/uploads/<path:filename>")
+def serve_upload(filename):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 
 if __name__ == "__main__":

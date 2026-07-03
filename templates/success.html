@@ -48,6 +48,9 @@
                 </div>
 
                 <div class="ticket-body">
+                    {% set is_print = order.task_type == 'Print Out' %}
+                    {% set rate = settings.rate_print_color|float if order.print_type == 'Color' and is_print else (settings.rate_photo_color|float if order.print_type == 'Color' else (settings.rate_print_bw|float if is_print else settings.rate_photo_bw|float)) %}
+
                     <div class="alert-notice alert-success" style="text-align: center; margin-bottom: 24px;">
                         <i class="bi bi-check-circle-fill me-2"></i>
                         Order Placed Successfully!
@@ -93,7 +96,7 @@
                             <span class="detail-label">Estimated Amount</span>
                             <span class="detail-value" style="color: var(--text-main); font-weight: 700;">
                                 <i class="bi bi-currency-rupee"></i>
-                                ₹{{ order.pages * (order.copies or 1) * (10 if order.print_type == 'Color' else 2) }}.00
+                                ₹{{ "%.2f"|format(order.pages * (order.copies or 1) * rate) }}
                             </span>
                         </div>
                         <div class="detail-item" style="grid-column: span 2;">
@@ -121,7 +124,7 @@
                         <ol class="instructions-list">
                             <li>Keep this token screen active or take a screenshot of your token <strong>#{{ order.token }}</strong>.</li>
                             <li>Arrive at the tuck shop counter at your scheduled time: <strong>{{ order.pickup_time }}</strong>.</li>
-                            <li>Show the token to the coordinator and make the payment of <strong>₹{{ order.pages * (order.copies or 1) * (10 if order.print_type == 'Color' else 2) }}.00</strong> (if not paid online).</li>
+                            <li>Show the token to the coordinator and make the payment of <strong>₹{{ "%.2f"|format(order.pages * (order.copies or 1) * rate) }}</strong> (if not paid online).</li>
                             <li>Collect your printed sheets/copies instantly and bypass the queue!</li>
                         </ol>
                     </div>
@@ -162,27 +165,22 @@
                         <tr>
                             <td><strong>Print Out (B&W)</strong></td>
                             <td>Standard A4 page</td>
-                            <td>₹2.00 / page</td>
+                            <td>₹{{ settings.rate_print_bw }} / page</td>
                         </tr>
                         <tr>
                             <td><strong>Print Out (Color)</strong></td>
                             <td>Standard A4 page</td>
-                            <td>₹10.00 / page</td>
+                            <td>₹{{ settings.rate_print_color }} / page</td>
                         </tr>
                         <tr>
                             <td><strong>Photostat (B&W)</strong></td>
                             <td>Single / Double sided copying</td>
-                            <td>₹2.00 / page</td>
+                            <td>₹{{ settings.rate_photo_bw }} / page</td>
                         </tr>
                         <tr>
-                            <td><strong>Document Scanning</strong></td>
-                            <td>Scan to PDF / Email</td>
-                            <td>₹5.00 / page</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Spiral Binding</strong></td>
-                            <td>Spiral comb + cover sheet</td>
-                            <td>₹30.00 / booklet</td>
+                            <td><strong>Photostat (Color)</strong></td>
+                            <td>Single / Double sided copying</td>
+                            <td>₹{{ settings.rate_photo_color }} / page</td>
                         </tr>
                     </tbody>
                 </table>
