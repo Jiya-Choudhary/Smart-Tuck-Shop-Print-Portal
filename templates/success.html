@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed - PrintEase</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body.success-body-bg {
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.92) 0%, rgba(241, 245, 249, 0.92) 100%), url("{{ url_for('static', filename='bg_success.png') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+
+<body class="success-body-bg">
+
+    <header class="header-nav">
+        <div class="container nav-container">
+            <a href="/" class="logo-link">
+                <span class="logo-icon"><i class="bi bi-printer-fill"></i></span>
+                <span>PrintEase</span>
+            </a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="/" class="active">Student Portal</a></li>
+                    <li><a href="/#search_roll_no"><i class="bi bi-search me-1"></i>Track Order</a></li>
+                    <li><a href="#" id="rateListLink"><i class="bi bi-tags-fill me-1"></i>Rate List</a></li>
+                    <li><a href="#" id="faqsLink"><i class="bi bi-question-circle-fill me-1"></i>Help & FAQs</a></li>
+                    <li><a href="/admin">Admin Dashboard</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="success-container">
+            <div class="ticket-card">
+                <div class="ticket-header">
+                    <div class="success-icon-badge">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+                    <div class="ticket-token-title">Your Queue Token</div>
+                    <h1 class="ticket-token-value">#{{ order.token }}</h1>
+                </div>
+
+                
+                <div class="ticket-perforation">
+                    <div class="notch notch-left"></div>
+                    <div class="ticket-divider"></div>
+                    <div class="notch notch-right"></div>
+                </div>
+
+                <div class="ticket-body">
+                    {% set is_print = order.task_type == 'Print Out' %}
+                    {% set rate = settings.rate_print_color|float if order.print_type == 'Color' and is_print else (settings.rate_photo_color|float if order.print_type == 'Color' else (settings.rate_print_bw|float if is_print else settings.rate_photo_bw|float)) %}
+
+                    <div class="alert-notice alert-success" style="text-align: center; margin-bottom: 24px;">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        Order Placed Successfully!
+                    </div>
+
+                    <div class="ticket-details-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Student Name</span>
+                            <span class="detail-value">
+                                <i class="bi bi-person-fill"></i>
+                                {{ order.name }}
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Roll Number</span>
+                            <span class="detail-value">
+                                <i class="bi bi-card-text"></i>
+                                {{ order.roll_no }}
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Task Type</span>
+                            <span class="detail-value">
+                                <i class="bi {% if order.task_type == 'Print Out' %}bi-printer-fill{% else %}bi-copy{% endif %}"></i>
+                                {{ order.task_type }}
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Print Specification</span>
+                            <span class="detail-value">
+                                <i class="bi bi-file-earmark-text"></i>
+                                {{ order.print_type }} ({{ order.pages }} pgs × {{ order.copies or 1 }} cps)
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Scheduled Pickup</span>
+                            <span class="detail-value" style="color: var(--primary); font-weight: 700;">
+                                <i class="bi bi-clock-fill"></i>
+                                {{ order.pickup_time }}
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Estimated Amount</span>
+                            <span class="detail-value" style="color: var(--text-main); font-weight: 700;">
+                                <i class="bi bi-currency-rupee"></i>
+                                ₹{{ "%.2f"|format(order.pages * (order.copies or 1) * rate) }}
+                            </span>
+                        </div>
+                        <div class="detail-item" style="grid-column: span 2;">
+                            <span class="detail-label">Payment Option</span>
+                            <span class="detail-value">
+                                <i class="bi bi-wallet2"></i>
+                                {{ order.payment }}
+                            </span>
+                        </div>
+                        {% if order.file_path %}
+                        <div class="detail-item" style="grid-column: span 2;">
+                            <span class="detail-label">Uploaded Document</span>
+                            <span class="detail-value" style="word-break: break-all; font-weight: 500; font-size: 0.85rem; color: var(--text-muted);">
+                                <i class="bi bi-file-earmark-check"></i>
+                                {{ order.file_path.split('_', 1)[1] if '_' in order.file_path else order.file_path }}
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="ticket-instructions">
+                        <h4 class="instructions-title">
+                            <i class="bi bi-info-circle-fill" style="color: var(--primary);"></i> Next Steps to Collect
+                        </h4>
+                        <ol class="instructions-list">
+                            <li>Keep this token screen active or take a screenshot of your token <strong>#{{ order.token }}</strong>.</li>
+                            <li>Arrive at the tuck shop counter at your scheduled time: <strong>{{ order.pickup_time }}</strong>.</li>
+                            <li>Show the token to the coordinator and make the payment of <strong>₹{{ "%.2f"|format(order.pages * (order.copies or 1) * rate) }}</strong> (if not paid online).</li>
+                            <li>Collect your printed sheets/copies instantly and bypass the queue!</li>
+                        </ol>
+                    </div>
+
+                    <div class="ticket-action">
+                        <a href="/?roll_no={{ order.roll_no }}" class="btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Student Portal
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 PrintEase Tuck Shop Portal. All rights reserved.</p>
+        </div>
+    </footer>
+
+    
+    <div id="rateListModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="bi bi-tags-fill text-primary"></i> Printing & Photocopy Rates</h3>
+                <button class="modal-close" id="closeRates">&times;</button>
+            </div>
+            <div class="modal-body">
+                <table class="rates-table">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Specification</th>
+                            <th>Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Print Out (B&W)</strong></td>
+                            <td>Standard A4 page</td>
+                            <td>₹{{ settings.rate_print_bw }} / page</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Print Out (Color)</strong></td>
+                            <td>Standard A4 page</td>
+                            <td>₹{{ settings.rate_print_color }} / page</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Photostat (B&W)</strong></td>
+                            <td>Single / Double sided copying</td>
+                            <td>₹{{ settings.rate_photo_bw }} / page</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Photostat (Color)</strong></td>
+                            <td>Single / Double sided copying</td>
+                            <td>₹{{ settings.rate_photo_color }} / page</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="faqsModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="bi bi-question-circle-fill text-primary"></i> Help & Support FAQ</h3>
+                <button class="modal-close" id="closeFaqs">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="faq-accordion">
+                    <div class="faq-item">
+                        <div class="faq-question">How does the priority queue work?</div>
+                        <div class="faq-answer">Orders are prioritized based on payment status (Paid orders first) and pickup urgency. Early pickup times get processed first.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">Can I cancel my order?</div>
+                        <div class="faq-answer">Yes, but only for "Pay on Pickup" orders and while the status is still "Pending". Paid orders or orders already processing cannot be cancelled.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">What file formats are supported?</div>
+                        <div class="faq-answer">We support PDF, DOC, DOCX, PNG, JPG, and JPEG. We recommend PDF to avoid formatting layout mismatches.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">What if I miss my scheduled pickup time?</div>
+                        <div class="faq-answer">Your prints will be kept safely at the shop counter for up to 24 hours. Show your token at the desk to collect them.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            const rateListLink = document.getElementById('rateListLink');
+            const faqsLink = document.getElementById('faqsLink');
+            const rateListModal = document.getElementById('rateListModal');
+            const faqsModal = document.getElementById('faqsModal');
+            const closeRates = document.getElementById('closeRates');
+            const closeFaqs = document.getElementById('closeFaqs');
+
+            function openModal(modal) {
+                modal.classList.add('active');
+            }
+
+            function closeModal(modal) {
+                modal.classList.remove('active');
+            }
+
+            rateListLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                openModal(rateListModal);
+            });
+
+            faqsLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                openModal(faqsModal);
+            });
+
+            closeRates.addEventListener('click', () => closeModal(rateListModal));
+            closeFaqs.addEventListener('click', () => closeModal(faqsModal));
+
+            
+            window.addEventListener('click', (e) => {
+                if (e.target === rateListModal) closeModal(rateListModal);
+                if (e.target === faqsModal) closeModal(faqsModal);
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - PrintEase</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        
+        body.login-body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.75) 0%, rgba(129, 140, 248, 0.75) 100%), url("{{ url_for('static', filename='bg_login.png') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .login-logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: #ffffff;
+            font-size: 1.8rem;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 16px rgba(79, 70, 229, 0.25);
+            animation: bounceIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            70% {
+                transform: scale(0.9);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .login-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .login-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .input-group-custom {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .input-group-custom i.input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            transition: color var(--transition-speed);
+            pointer-events: none;
+        }
+
+        .input-control-custom {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            border: 1.5px solid var(--border-color);
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-main);
+            outline: none;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .input-control-custom:focus {
+            border-color: var(--primary);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        .input-control-custom:focus~i.input-icon {
+            color: var(--primary);
+        }
+
+        .password-toggle-btn {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color var(--transition-speed);
+        }
+
+        .password-toggle-btn:hover {
+            color: var(--primary);
+        }
+
+        .btn-login-submit {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: #ffffff;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+            transition: all var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-login-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-login-submit:active {
+            transform: translateY(0);
+        }
+
+        .alert-error-custom {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #fef2f2;
+            border: 1px solid #fca5a5;
+            color: #b91c1c;
+            padding: 12px 16px;
+            border-radius: var(--border-radius);
+            font-size: 0.88rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-6px);
+            }
+
+            75% {
+                transform: translateX(6px);
+            }
+        }
+
+        .security-footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            border-top: 1px dashed var(--border-color);
+            padding-top: 20px;
+        }
+
+        .security-footer i {
+            color: var(--success);
+            margin-right: 4px;
+        }
+
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2.5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="login-body">
+
+    <div class="login-card">
+        <div class="login-header">
+            <div class="login-logo">
+                <i class="bi bi-printer-fill"></i>
+            </div>
+            <h1 class="login-title">PrintEase Admin</h1>
+            <p class="login-subtitle">Sign in to access your fulfillment command center</p>
+        </div>
+
+        {% if error %}
+        <div class="alert-error-custom">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span>{{ error }}</span>
+        </div>
+        {% endif %}
+
+        <form action="{{ url_for('admin_login') }}" method="POST" id="loginForm" onsubmit="showLoading()">
+            <div class="input-group-custom">
+                <input type="text" id="username" name="username" class="input-control-custom" placeholder="Username"
+                    required autocomplete="username">
+                <i class="bi bi-person-fill input-icon"></i>
+            </div>
+
+            <div class="input-group-custom">
+                <input type="password" id="password" name="password" class="input-control-custom" placeholder="Password"
+                    required autocomplete="current-password">
+                <i class="bi bi-lock-fill input-icon"></i>
+                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility()"
+                    aria-label="Toggle Password Visibility">
+                    <i class="bi bi-eye-fill" id="togglePasswordIcon"></i>
+                </button>
+            </div>
+
+            <button type="submit" class="btn-login-submit" id="submitBtn">
+                <span id="btnText">Sign In</span>
+                <span class="spinner" id="btnSpinner"></span>
+            </button>
+        </form>
+
+        <div class="security-footer">
+            <p><i class="bi bi-shield-lock-fill"></i> Securing PrintEase Portal operations.</p>
+        </div>
+    </div>
+
+    <script>
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('togglePasswordIcon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('bi-eye-fill');
+                toggleIcon.classList.add('bi-eye-slash-fill');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('bi-eye-slash-fill');
+                toggleIcon.classList.add('bi-eye-fill');
+            }
+        }
+
+        function showLoading() {
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnSpinner = document.getElementById('btnSpinner');
+
+            submitBtn.style.pointerEvents = 'none';
+            submitBtn.style.opacity = '0.9';
+            btnText.textContent = 'Authenticating...';
+            btnSpinner.style.display = 'inline-block';
+        }
+    </script>
+</body>
+
+</html>
